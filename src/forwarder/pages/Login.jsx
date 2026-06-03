@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { loginRequest } from "../../api/auth";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -24,10 +25,13 @@ export default function Login() {
     setError("");
 
     try {
-      console.log("LOGIN DATA:", data);
+      const payload = {
+        email: data.email,
+        password: data.password,
+      };
 
       // сюда потом вставишь API
-      // await loginRequest(data)
+      await loginRequest(payload);
     } catch (e) {
       setError(e?.message || "Ошибка входа");
     }
