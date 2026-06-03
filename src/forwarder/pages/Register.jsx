@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { registerRequest } from "../../api/auth";
 
 export default function Register() {
   const [error, setError] = useState("");
@@ -27,9 +28,17 @@ export default function Register() {
     setError("");
 
     try {
-      console.log("REGISTER COMPANY:", data);
+      const payload = {
+        bin: data.bin,
+        company_name: data.companyName,
+        manager_name: data.managerName,
+        phone: data.phone,
+        email: data.email,
+        password: data.password,
+        password_confirm: data.confirmPassword,
+      };
 
-      // await registerCompanyRequest(data)
+      const res = await registerRequest(payload);
     } catch (e) {
       setError(e?.message || "Ошибка регистрации");
     }

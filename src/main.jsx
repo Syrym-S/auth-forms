@@ -7,7 +7,7 @@ import Customer from "./Customer.jsx";
 
 let App;
 
-switch ("customer") {
+switch ("forwarder") {
   case "driver":
     App = Driver;
     break;
