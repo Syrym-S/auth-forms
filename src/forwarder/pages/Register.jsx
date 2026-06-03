@@ -31,7 +31,7 @@ export default function Register() {
       const payload = {
         bin: data.bin,
         company_name: data.companyName,
-        manager_name: data.managerName,
+        fio: data.managerName,
         phone: data.phone,
         email: data.email,
         password: data.password,
