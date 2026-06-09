@@ -25,7 +25,7 @@ const config = {
   password: process.env.FTP_PASSWORD,
   host: process.env.FTP_HOST,
   port: parseInt(process.env.FTP_PORT || "21", 10),
-  localRoot: __dirname + "/dist/" + env,
+  localRoot: __dirname + "/dist/" + env + "/assets",
   remoteRoot: process.env.FTP_REMOTE_ROOT,
   include: ["*", "**/*"],
   deleteRemote: false,
