@@ -13,7 +13,8 @@
     "dev:customer": "vite --config vite.customer.config.js",
     "build:driver": "vite build --config vite.driver.config.js",
     "build:forwarder": "vite build --config vite.forwarder.config.js",
-    "build:customer": "vite build --config vite.customer.config.js"
+    "build:customer": "vite build --config vite.customer.config.js",
+    "deploy": "vite build && node deploy.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -21,6 +22,8 @@
     "@mui/icons-material": "^9.0.0",
     "@mui/material": "^9.0.0",
     "axios": "^1.15.2",
+    "dotenv": "^17.4.2",
+    "ftp-deploy": "^2.4.7",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-hook-form": "^7.77.0",
