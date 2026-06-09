@@ -12,7 +12,7 @@ if (!env) {
 }
 
 dotenv.config({
-  path: `.env.${env}`,
+  path: `.env.ftp.${env}`,
 });
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,7 +25,7 @@ const config = {
   password: process.env.FTP_PASSWORD,
   host: process.env.FTP_HOST,
   port: parseInt(process.env.FTP_PORT || "21", 10),
-  localRoot: __dirname + "/dist",
+  localRoot: __dirname + "/dist/" + env,
   remoteRoot: process.env.FTP_REMOTE_ROOT,
   include: ["*", "**/*"],
   deleteRemote: false,
