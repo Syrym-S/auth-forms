@@ -25,3 +25,6 @@ dist-ssr
 
 # deploy 
 .env.ftp
+.env.ftp.driver
+.env.ftp.customer
+.env.ftp.forwarder
