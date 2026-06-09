@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
 import Driver from "./Driver.jsx";
 import Forwarder from "./Forwarder.jsx";
 import Customer from "./Customer.jsx";
