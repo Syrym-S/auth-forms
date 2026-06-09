@@ -3,7 +3,17 @@ import FtpDeploy from "ftp-deploy";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 
-dotenv.config({ path: ".env.ftp" });
+const envArg = process.argv.find((arg) => arg.startsWith("--env="));
+const env = envArg?.split("=")[1];
+
+if (!env) {
+  console.error("❌ Укажи окружение: --env=driver | customer | forwarder");
+  process.exit(1);
+}
+
+dotenv.config({
+  path: `.env.${env}`,
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
