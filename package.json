@@ -11,12 +11,15 @@
     "dev:driver": "vite --config vite.driver.config.js",
     "dev:forwarder": "vite --config vite.forwarder.config.js",
     "dev:customer": "vite --config vite.customer.config.js",
+    "dev:factor": "vite --config vite.factor.config.js",
     "build:driver": "vite build --config vite.driver.config.js",
     "build:forwarder": "vite build --config vite.forwarder.config.js",
     "build:customer": "vite build --config vite.customer.config.js",
+    "build:factor": "vite build --config vite.factor.config.js",
     "deploy:driver": "npm run build:driver && node deploy.js --env=driver",
     "deploy:forwarder": "npm run build:forwarder && node deploy.js --env=forwarder",
-    "deploy:customer": "npm run build:customer && node deploy.js --env=customer"
+    "deploy:customer": "npm run build:customer && node deploy.js --env=customer",
+    "deploy:factor": "npm run build:factor && node deploy.js --env=factor"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

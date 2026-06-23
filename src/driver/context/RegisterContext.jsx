@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from 'react';
 
 const RegisterContext = createContext();
 
@@ -7,25 +7,26 @@ export const useRegister = () => useContext(RegisterContext);
 export function RegisterProvider({ children }) {
   const [form, setForm] = useState({
     // step 1
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
 
     // step 2
     isForeign: false,
-    iin: "",
-    docNumber: "",
-    docIssuer: "",
-    docDate: "",
+    iin: '',
+    docNumber: '',
+    issueCountry: '',
+    docIssuer: '',
+    docDate: '',
 
     // step 3
     isIP: false,
-    ipName: "",
-    ipIIN: "",
+    ipName: '',
+    ipIIN: '',
 
     // invite code
-    invite: "",
+    invite: '',
   });
 
   const updateField = (field, value) => {

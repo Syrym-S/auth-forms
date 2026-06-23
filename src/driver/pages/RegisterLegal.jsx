@@ -7,30 +7,30 @@ import {
   FormControlLabel,
   Alert,
   Divider,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import AuthLayout from "../components/AuthLayout";
-import { useRegister } from "../context/RegisterContext";
-import { useForm } from "react-hook-form";
-import { registerRequest } from "../../api/auth";
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import AuthLayout from '../components/AuthLayout';
+import { useRegister } from '../context/RegisterContext';
+import { useForm } from 'react-hook-form';
+import { registerRequest } from '../../api/auth';
 
 export default function RegisterLegal() {
   const navigate = useNavigate();
   const { form, updateStep } = useRegister();
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { register, handleSubmit, watch } = useForm({
     defaultValues: form,
   });
 
-  const isIP = watch("isIP");
+  const isIP = watch('isIP');
 
   const onSubmit = async (data) => {
     setLoading(true);
-    setError("");
+    setError('');
 
     try {
       updateStep(data);
@@ -45,6 +45,7 @@ export default function RegisterLegal() {
       };
 
       if (form.docNumber) payload.document_number = form.docNumber;
+      if (form.issueCountry) payload.issue_country = form.issueCountry;
       if (form.iin) payload.iin = form.iin;
       if (form.docIssuer) payload.docIssuer = form.docIssuer;
       if (form.docDate) payload.docDate = form.docDate;
@@ -58,11 +59,11 @@ export default function RegisterLegal() {
         throw new Error(res.data.error);
       }
 
-      console.log("REGISTER SUCCESS", res.data);
+      console.log('REGISTER SUCCESS', res.data);
 
-      window.location.href = "/driver";
+      window.location.href = '/driver';
     } catch (e) {
-      setError(e?.response?.data?.error || e.message || "Ошибка регистрации");
+      setError(e?.response?.data?.error || e.message || 'Ошибка регистрации');
     } finally {
       setLoading(false);
     }
@@ -75,8 +76,8 @@ export default function RegisterLegal() {
         mb={1}
         sx={{
           fontSize: {
-            xs: "2rem",
-            md: "1.5rem",
+            xs: '2rem',
+            md: '1.5rem',
           },
           fontWeight: {
             xs: 600,
@@ -95,7 +96,7 @@ export default function RegisterLegal() {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControlLabel
-          control={<Checkbox {...register("isIP")} />}
+          control={<Checkbox {...register('isIP')} />}
           label="ИП?"
         />
 
@@ -104,7 +105,7 @@ export default function RegisterLegal() {
           label="Название ИП"
           margin="normal"
           disabled={!isIP}
-          {...register("ipName")}
+          {...register('ipName')}
         />
 
         <TextField
@@ -112,7 +113,7 @@ export default function RegisterLegal() {
           label="ИИН"
           margin="normal"
           disabled={!isIP}
-          {...register("ipIIN")}
+          {...register('ipIIN')}
         />
 
         <Button
@@ -122,7 +123,7 @@ export default function RegisterLegal() {
           type="submit"
           disabled={loading}
         >
-          {loading ? "Загрузка..." : "Регистрация"}
+          {loading ? 'Загрузка...' : 'Регистрация'}
         </Button>
       </form>
 
@@ -132,7 +133,7 @@ export default function RegisterLegal() {
         <Button
           fullWidth
           variant="outlined"
-          onClick={() => navigate("/register/citizen")}
+          onClick={() => navigate('/register/citizen')}
         >
           Назад
         </Button>

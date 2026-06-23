@@ -5,18 +5,18 @@ import {
   Typography,
   Divider,
   Alert,
-} from "@mui/material";
-import { Link } from "react-router-dom";
-import AuthLayout from "../components/AuthLayout";
-import { useState } from "react";
-import { registerRequest } from "../../api/auth";
-import { useRegister } from "../context/InviteContext";
-import { useForm } from "react-hook-form";
+} from '@mui/material';
+import { Link } from 'react-router-dom';
+import AuthLayout from '../components/AuthLayout';
+import { useState } from 'react';
+import { registerRequest } from '../../api/auth';
+import { useRegister } from '../context/InviteContext';
+import { useForm } from 'react-hook-form';
 
 export default function Register() {
   const { invite } = useRegister();
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const {
     register,
@@ -25,18 +25,20 @@ export default function Register() {
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      company_name: "",
-      bin: "",
-      email: "",
-      password: "",
-      password_confirm: "",
+      company_name: '',
+      bin: '',
+      document_number: '',
+      issue_country: '',
+      email: '',
+      password: '',
+      password_confirm: '',
     },
   });
 
-  const password = watch("password");
+  const password = watch('password');
 
   const onSubmit = async (data) => {
-    setError("");
+    setError('');
 
     try {
       const payload = {
@@ -50,11 +52,11 @@ export default function Register() {
         throw new Error(res.data.error);
       }
 
-      console.log("REGISTER SUCCESS", res.data);
+      console.log('REGISTER SUCCESS', res.data);
 
-      window.location.href = "/customer";
+      window.location.href = '/customer';
     } catch (e) {
-      setError(e?.response?.data?.error || e?.message || "Ошибка регистрации");
+      setError(e?.response?.data?.error || e?.message || 'Ошибка регистрации');
     }
   };
 
@@ -65,8 +67,8 @@ export default function Register() {
         mb={2}
         sx={{
           fontSize: {
-            xs: "2rem",
-            md: "1.5rem",
+            xs: '2rem',
+            md: '1.5rem',
           },
           fontWeight: {
             xs: 600,
@@ -90,8 +92,8 @@ export default function Register() {
           margin="normal"
           error={!!errors.company_name}
           helperText={errors.company_name?.message}
-          {...register("company_name", {
-            required: "Введите название компании",
+          {...register('company_name', {
+            required: 'Введите название компании',
           })}
         />
 
@@ -101,16 +103,38 @@ export default function Register() {
           margin="normal"
           error={!!errors.bin}
           helperText={errors.bin?.message}
-          {...register("bin", {
-            required: "Введите БИН",
+          {...register('bin', {
+            required: 'Введите БИН',
             minLength: {
               value: 12,
-              message: "БИН должен содержать 12 цифр",
+              message: 'БИН должен содержать 12 цифр',
             },
             maxLength: {
               value: 12,
-              message: "БИН должен содержать 12 цифр",
+              message: 'БИН должен содержать 12 цифр',
             },
+          })}
+        />
+
+        <TextField
+          fullWidth
+          label="Номер документа"
+          margin="normal"
+          error={!!errors.document_number}
+          helperText={errors.document_number?.message}
+          {...register('document_number', {
+            required: 'Введите номер документа',
+          })}
+        />
+
+        <TextField
+          fullWidth
+          label="Страна документа"
+          margin="normal"
+          error={!!errors.issue_country}
+          helperText={errors.issue_country?.message}
+          {...register('issue_country', {
+            required: 'Введите страну документа',
           })}
         />
 
@@ -120,11 +144,11 @@ export default function Register() {
           margin="normal"
           error={!!errors.email}
           helperText={errors.email?.message}
-          {...register("email", {
-            required: "Введите email",
+          {...register('email', {
+            required: 'Введите email',
             pattern: {
               value: /^\S+@\S+\.\S+$/,
-              message: "Некорректный email",
+              message: 'Некорректный email',
             },
           })}
         />
@@ -136,11 +160,11 @@ export default function Register() {
           margin="normal"
           error={!!errors.password}
           helperText={errors.password?.message}
-          {...register("password", {
-            required: "Введите пароль",
+          {...register('password', {
+            required: 'Введите пароль',
             minLength: {
               value: 6,
-              message: "Минимум 6 символов",
+              message: 'Минимум 6 символов',
             },
           })}
         />
@@ -152,9 +176,9 @@ export default function Register() {
           margin="normal"
           error={!!errors.password_confirm}
           helperText={errors.password_confirm?.message}
-          {...register("password_confirm", {
-            required: "Подтвердите пароль",
-            validate: (value) => value === password || "Пароли не совпадают",
+          {...register('password_confirm', {
+            required: 'Подтвердите пароль',
+            validate: (value) => value === password || 'Пароли не совпадают',
           })}
         />
 
@@ -165,7 +189,7 @@ export default function Register() {
           sx={{ mt: 2 }}
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Загрузка..." : "Зарегистрировать"}
+          {isSubmitting ? 'Загрузка...' : 'Зарегистрировать'}
         </Button>
       </Box>
 

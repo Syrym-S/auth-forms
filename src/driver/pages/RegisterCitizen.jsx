@@ -7,18 +7,18 @@ import {
   Checkbox,
   FormControlLabel,
   Alert,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import AuthLayout from "../components/AuthLayout";
-import { useRegister } from "../context/RegisterContext";
-import { useForm } from "react-hook-form";
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import AuthLayout from '../components/AuthLayout';
+import { useRegister } from '../context/RegisterContext';
+import { useForm } from 'react-hook-form';
 
 export default function RegisterCitizen() {
   const navigate = useNavigate();
   const { form, updateStep } = useRegister();
 
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const {
     register,
@@ -29,17 +29,17 @@ export default function RegisterCitizen() {
     defaultValues: form,
   });
 
-  const isForeign = watch("isForeign");
+  const isForeign = watch('isForeign');
 
   const onSubmit = (data) => {
-    setError("");
+    setError('');
 
     if (!data.iin) {
-      return setError("Введите ИИН");
+      return setError('Введите ИИН');
     }
 
     updateStep(data);
-    navigate("/register/legal");
+    navigate('/register/legal');
   };
 
   return (
@@ -49,8 +49,8 @@ export default function RegisterCitizen() {
         mb={1}
         sx={{
           fontSize: {
-            xs: "2rem",
-            md: "1.5rem",
+            xs: '2rem',
+            md: '1.5rem',
           },
           fontWeight: {
             xs: 600,
@@ -69,7 +69,7 @@ export default function RegisterCitizen() {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControlLabel
-          control={<Checkbox {...register("isForeign")} />}
+          control={<Checkbox {...register('isForeign')} />}
           label="Иностранец?"
         />
 
@@ -79,8 +79,8 @@ export default function RegisterCitizen() {
           margin="normal"
           error={!!errors.iin}
           helperText={errors.iin?.message}
-          {...register("iin", {
-            required: "Введите ИИН",
+          {...register('iin', {
+            required: 'Введите ИИН',
           })}
         />
 
@@ -89,7 +89,15 @@ export default function RegisterCitizen() {
           label="Номер уд. личности"
           margin="normal"
           disabled={isForeign}
-          {...register("docNumber")}
+          {...register('docNumber')}
+        />
+
+        <TextField
+          fullWidth
+          label="Страна документа"
+          margin="normal"
+          disabled={isForeign}
+          {...register('issueCountry')}
         />
 
         <TextField
@@ -97,7 +105,7 @@ export default function RegisterCitizen() {
           label="Кем выдан"
           margin="normal"
           disabled={isForeign}
-          {...register("docIssuer")}
+          {...register('docIssuer')}
         />
 
         <TextField
@@ -106,7 +114,7 @@ export default function RegisterCitizen() {
           margin="normal"
           disabled={isForeign}
           InputLabelProps={{ shrink: true }}
-          {...register("docDate")}
+          {...register('docDate')}
         />
 
         <Box mt={2} display="flex" gap={2}>
@@ -119,7 +127,7 @@ export default function RegisterCitizen() {
           <Button
             fullWidth
             variant="outlined"
-            onClick={() => navigate("/register")}
+            onClick={() => navigate('/register')}
           >
             Назад
           </Button>
