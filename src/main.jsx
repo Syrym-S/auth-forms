@@ -5,9 +5,10 @@ import Forwarder from './Forwarder.jsx';
 import Customer from './Customer.jsx';
 import Factor from './Factor.jsx';
 
+const role = import.meta.env.VITE_AUTH_ROLE;
 let App;
 
-switch ('driver') {
+switch (role) {
   case 'driver':
     App = Driver;
     break;

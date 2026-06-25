@@ -4,9 +4,12 @@ import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  
   define: {
+    'import.meta.env.VITE_AUTH_ROLE': JSON.stringify('factor'),
     'process.env.NODE_ENV': JSON.stringify('production'),
   },
+
   build: {
     outDir: 'dist/factor/assets',
     cssCodeSplit: false,
