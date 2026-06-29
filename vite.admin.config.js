@@ -6,25 +6,25 @@ export default defineConfig({
   plugins: [react()],
 
   define: {
-      'import.meta.env.VITE_AUTH_ROLE': JSON.stringify('forwarder'),
+      'import.meta.env.VITE_AUTH_ROLE': JSON.stringify('admin'),
       'process.env.NODE_ENV': JSON.stringify('production'),
   },
 
   build: {
-    outDir: "dist/forwarder/assets",
+    outDir: "dist/admin/assets",
     cssCodeSplit: false,
     lib: {
       entry: "src/main.jsx",
       formats: ["iife"],
-      name: "ForwarderApp",
+      name: "AdminApp",
       fileName: () => "index.js",
       cssFileName: "index",
     },
     rollupOptions: {
-      // input: resolve(__dirname, "index.forwarder.html"),
+      // input: resolve(__dirname, "index.admin.html"),
     },
   },
   server: {
-    open: "index.forwarder.html",
+    open: "index.admin.html",
   },
 });

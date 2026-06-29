@@ -4,6 +4,7 @@ import Driver from './Driver.jsx';
 import Forwarder from './Forwarder.jsx';
 import Customer from './Customer.jsx';
 import Factor from './Factor.jsx';
+import Admin from './Admin.jsx';
 
 const role = import.meta.env.VITE_AUTH_ROLE;
 let App;
@@ -23,6 +24,10 @@ switch (role) {
 
   case 'factor':
     App = Factor;
+    break;
+
+  case 'admin':
+    App = Admin;
     break;
 
   default:

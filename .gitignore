@@ -24,6 +24,7 @@ dist-ssr
 *.sw?
 
 # deploy 
+.env.ftp.admin
 .env.ftp.factor
 .env.ftp.driver
 .env.ftp.customer
