@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import FtpDeploy from "ftp-deploy";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import path from "path";
 
 const envArg = process.argv.find((arg) => arg.startsWith("--env="));
 const env = envArg?.split("=")[1];
@@ -25,7 +26,7 @@ const config = {
   password: process.env.FTP_PASSWORD,
   host: process.env.FTP_HOST,
   port: parseInt(process.env.FTP_PORT || "21", 10),
-  localRoot: __dirname + "/dist/" + env + "/assets",
+  localRoot: path.join(__dirname, "dist", "assets", "js", env),
   remoteRoot: process.env.FTP_REMOTE_ROOT,
   include: ["*", "**/*"],
   deleteRemote: false,

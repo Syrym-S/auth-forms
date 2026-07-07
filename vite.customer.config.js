@@ -1,17 +1,16 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { resolve } from "path";
 
 export default defineConfig({
   plugins: [react()],
 
   define: {
-      'import.meta.env.VITE_AUTH_ROLE': JSON.stringify('customer'),
-      'process.env.NODE_ENV': JSON.stringify('production'),
+    "import.meta.env.VITE_AUTH_ROLE": JSON.stringify("customer"),
+    "process.env.NODE_ENV": JSON.stringify("production"),
   },
 
   build: {
-    outDir: "dist/customer/assets",
+    outDir: "dist/assets/js/customer",
     cssCodeSplit: false,
     lib: {
       entry: "src/main.jsx",

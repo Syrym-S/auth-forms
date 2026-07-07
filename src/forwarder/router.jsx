@@ -4,7 +4,7 @@ import Register from "./pages/Register";
 
 export default function ForwarderRouter() {
   return (
-    <BrowserRouter basename="/auth">
+    <BrowserRouter basename="/staging/auth">
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />

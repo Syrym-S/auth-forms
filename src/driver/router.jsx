@@ -20,7 +20,7 @@ function RedirectWithQuery() {
 
 export default function DriverRouter() {
   return (
-    <BrowserRouter basename="/auth">
+    <BrowserRouter basename="/staging/auth">
       <Routes>
         <Route path="/" element={<RedirectWithQuery />} />
         <Route path="/login" element={<Login />} />

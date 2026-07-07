@@ -35,10 +35,8 @@ export default function Login() {
       if (res.data?.error) {
         throw new Error(res.data.error);
       }
-
       console.log("LOGIN SUCCESS", res.data);
-
-      window.location.href = "/customer";
+      window.location.href = "/staging/customer";
     } catch (e) {
       setError(e?.response?.data?.error || e?.message || "Ошибка авторизации");
     }

@@ -38,7 +38,7 @@ export default function Login() {
 
       console.log("LOGIN SUCCESS", res.data);
 
-      window.location.href = "/driver";
+      window.location.href = "/staging/driver";
     } catch (e) {
       setError(e?.response?.data?.error || e?.message || "Ошибка авторизации");
     }

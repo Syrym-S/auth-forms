@@ -32,6 +32,8 @@ export default function Login() {
 
       // сюда потом вставишь API
       await loginRequest(payload);
+
+      window.location.href = "/staging/forwarder";
     } catch (e) {
       setError(e?.message || "Ошибка входа");
     }
