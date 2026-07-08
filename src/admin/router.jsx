@@ -3,7 +3,7 @@ import Login from "./pages/Login";
 
 export default function AdminRouter() {
   return (
-    <BrowserRouter basename="/staging/auth">
+    <BrowserRouter basename={isStaging ? "/staging/auth" : "/auth"}>
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />

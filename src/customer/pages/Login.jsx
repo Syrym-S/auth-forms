@@ -11,6 +11,7 @@ import AuthLayout from "../components/AuthLayout";
 import { useState } from "react";
 import { loginRequest } from "../../api/auth";
 import { useForm } from "react-hook-form";
+import { isStaging } from "../../api/client";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -36,7 +37,8 @@ export default function Login() {
         throw new Error(res.data.error);
       }
       console.log("LOGIN SUCCESS", res.data);
-      window.location.href = "/staging/customer";
+      
+      window.location.href = isStaging ? "/staging/customer" : "/customer";
     } catch (e) {
       setError(e?.response?.data?.error || e?.message || "Ошибка авторизации");
     }

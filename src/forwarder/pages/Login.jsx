@@ -11,6 +11,7 @@ import AuthLayout from "../components/AuthLayout";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { loginRequest } from "../../api/auth";
+import { isStaging } from "../../api/client";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -33,7 +34,7 @@ export default function Login() {
       // сюда потом вставишь API
       await loginRequest(payload);
 
-      window.location.href = "/staging/forwarder";
+      window.location.href = isStaging ? "/staging/forwarder" : "/forwarder";
     } catch (e) {
       setError(e?.message || "Ошибка входа");
     }

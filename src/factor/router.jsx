@@ -4,7 +4,7 @@ import Register from "./pages/Register";
 
 export default function FactorRouter() {
   return (
-    <BrowserRouter basename="/staging/auth">
+    <BrowserRouter basename={isStaging ? "/staging/auth" : "/auth"}>
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
