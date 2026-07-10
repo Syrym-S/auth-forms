@@ -32,9 +32,18 @@ export default function Login() {
       };
 
       // сюда потом вставишь API
-      await loginRequest(payload);
+      const res = await loginRequest(payload);
 
-      window.location.href = isStaging ? "/staging/forwarder" : "/forwarder";
+      const redirectUrl =
+        res?.redirect_url ||
+        res?.data?.redirect_url;
+
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+        return;
+      } else {
+         window.location.href = isStaging ? "/staging/forwarder" : "/forwarder";
+      }
     } catch (e) {
       setError(e?.message || "Ошибка входа");
     }

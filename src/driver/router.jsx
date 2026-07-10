@@ -10,7 +10,21 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Citizen from "./pages/RegisterCitizen";
 import Legal from "./pages/RegisterLegal";
-import { isStaging } from "../api/client";
+
+function getAppData() {
+  return window.APP_DATA || window.app_data || {};
+}
+
+function getIsStaging() {
+  return (
+    getAppData().mode === "staging" ||
+    window.location.pathname.startsWith("/staging/")
+  );
+}
+
+function getAuthBasename() {
+  return getIsStaging() ? "/staging/auth" : "/auth";
+}
 
 // для сохранение данных invite
 function RedirectWithQuery() {
@@ -20,8 +34,10 @@ function RedirectWithQuery() {
 }
 
 export default function DriverRouter() {
+  const basename = getAuthBasename();
+
   return (
-    <BrowserRouter basename={isStaging ? "/staging/auth" : "/auth"}>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route path="/" element={<RedirectWithQuery />} />
         <Route path="/login" element={<Login />} />

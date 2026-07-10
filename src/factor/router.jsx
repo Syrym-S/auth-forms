@@ -2,9 +2,27 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
-export default function FactorRouter() {
+function getAppData() {
+  return window.APP_DATA || window.app_data || {};
+}
+
+function getIsStaging() {
   return (
-    <BrowserRouter basename={isStaging ? "/staging/auth" : "/auth"}>
+    getAppData().mode === "staging" ||
+    window.location.pathname.startsWith("/staging/")
+  );
+}
+
+function getAuthBasename() {
+  return getIsStaging() ? "/staging/auth" : "/auth";
+}
+
+
+export default function FactorRouter() {
+  const basename = getAuthBasename();
+
+  return (
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />

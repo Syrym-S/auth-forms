@@ -13,8 +13,6 @@ import { loginRequest } from "../../api/auth";
 import { useForm } from "react-hook-form";
 import { isStaging } from "../../api/client";
 
-
-
 export default function Login() {
   const [error, setError] = useState("");
 
@@ -41,7 +39,16 @@ export default function Login() {
 
       console.log("LOGIN SUCCESS", res.data);
 
-      window.location.href = isStaging ? "/staging/driver" : "/driver";
+      const redirectUrl =
+        res?.redirect_url ||
+        res?.data?.redirect_url;
+
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+        return;
+      } else {
+         window.location.href = isStaging ? "/staging/driver" : "/driver";
+      }
     } catch (e) {
       setError(e?.response?.data?.error || e?.message || "Ошибка авторизации");
     }

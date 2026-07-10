@@ -11,7 +11,7 @@ export default defineConfig({
   },
 
   build: {
-    outDir: 'dist/factor/assets',
+    outDir: "dist/assets/js/factor",
     cssCodeSplit: false,
     lib: {
       entry: 'src/main.jsx',

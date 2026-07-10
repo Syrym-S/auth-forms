@@ -11,7 +11,7 @@ export default defineConfig({
   },
 
   build: {
-    outDir: "dist/admin/assets",
+    outDir: "dist/assets/js/admin",
     cssCodeSplit: false,
     lib: {
       entry: "src/main.jsx",

@@ -37,8 +37,17 @@ export default function Login() {
         throw new Error(res.data.error);
       }
       console.log("LOGIN SUCCESS", res.data);
-      
-      window.location.href = isStaging ? "/staging/customer" : "/customer";
+
+      const redirectUrl =
+        res?.redirect_url ||
+        res?.data?.redirect_url;
+
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+        return;
+      } else {
+         window.location.href = isStaging ? "/staging/customer" : "/customer";
+      }
     } catch (e) {
       setError(e?.response?.data?.error || e?.message || "Ошибка авторизации");
     }

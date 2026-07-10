@@ -36,9 +36,18 @@ export default function Login() {
         password: data.password,
       };
 
-      await loginRequest(payload);
+      const res = await loginRequest(payload);
 
-      window.location.href = isStaging ? "/staging/factor" : "/factor";
+      const redirectUrl =
+        res?.redirect_url ||
+        res?.data?.redirect_url;
+
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+        return;
+      } else {
+         window.location.href = isStaging ? "/staging/factor" : "/factor";
+      }
     } catch (error) {
       setError(
         error.response?.data?.message || error.message || 'Ошибка входа',
