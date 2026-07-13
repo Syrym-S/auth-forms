@@ -11,6 +11,8 @@ import Register from "./pages/Register";
 import Citizen from "./pages/RegisterCitizen";
 import Legal from "./pages/RegisterLegal";
 
+import { Capacitor } from "@capacitor/core";
+
 function getAppData() {
   return window.APP_DATA || window.app_data || {};
 }
@@ -34,7 +36,10 @@ function RedirectWithQuery() {
 }
 
 export default function DriverRouter() {
-  const basename = getAuthBasename();
+  const basename = Capacitor.isNativePlatform()
+    ? '/'
+    : '/auth';
+
 
   return (
     <BrowserRouter basename={basename}>

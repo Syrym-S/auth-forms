@@ -3,7 +3,7 @@ import axios from "axios";
 export const isStaging = window?.APP_DATA?.mode === "staging";
 
 const baseURL =
-  window?.APP_DATA?.rest_url || "https://forwarder.360logistics.kz/wp-json/";
+  window?.APP_DATA?.rest_url || "https://driver.360logistics.kz/wp-json/";
 
 console.log(baseURL);
 
