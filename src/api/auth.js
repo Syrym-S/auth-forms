@@ -5,4 +5,9 @@ export const loginRequest = (data) => api.post("/auth/v1/auth", data);
 
 export const registerRequest = (data) => api.post("/auth/v1/register", data);
 
-export const getClaimInfoApi = () => api.get("/auth/v1/claim-info");
+export const getClaimInfoApi = (claimCode) =>
+  api.get("/auth/v1/claim-info", {
+    params: {
+      claim: claimCode,
+    },
+  });

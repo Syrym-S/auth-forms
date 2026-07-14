@@ -5,6 +5,7 @@ import {
   Typography,
   Divider,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
@@ -12,16 +13,23 @@ import { useState, useEffect } from "react";
 import { getClaimInfoApi, registerRequest } from "../../api/auth";
 import { useRegister } from "../context/InviteContext";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router-dom";
 
 export default function Register() {
   const { invite } = useRegister();
+  const { search } = useLocation();
 
+  const claimCode = new URLSearchParams(search).get("claim");
+
+  // const [valuesFromInviteLink, setValuesFromInviteLink] = useState(null);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -36,6 +44,9 @@ export default function Register() {
   });
 
   const password = watch("password");
+  const company_name = watch("company_name");
+  const bin = watch("bin");
+  const email = watch("email");
 
   const onSubmit = async (data) => {
     setError("");
@@ -62,11 +73,32 @@ export default function Register() {
 
   const fetchClaimInfo = async () => {
     try {
-      const response = await getClaimInfoApi();
+      setIsLoading(true);
 
-      console.log(response);
+      const response = await getClaimInfoApi(claimCode);
+
+      const data = response.data;
+
+      // setValuesFromInviteLink(data);
+
+      reset({
+        company_name: data.full_name ?? "",
+        bin: data.bin ?? "",
+        document_number: "",
+        issue_country: data.issue_country ?? "",
+        email: data?.person?.email ?? "",
+        password: "",
+        password_confirm: "",
+      });
+
+      setIsLoading(false);
     } catch (e) {
-      console.log(e);
+      setError(
+        e?.response?.data?.error ||
+          e?.message ||
+          "Ошибка c получением claim code",
+      );
+      setIsLoading(false);
     }
   };
 
@@ -92,6 +124,7 @@ export default function Register() {
         }}
       >
         Регистрация
+        {isLoading && <CircularProgress size={16} sx={{ pl: 2 }} />}
       </Typography>
 
       {error && (
@@ -110,6 +143,11 @@ export default function Register() {
           {...register("company_name", {
             required: "Введите название компании",
           })}
+          slotProps={{
+            inputLabel: {
+              shrink: !!company_name,
+            },
+          }}
         />
 
         <TextField
@@ -129,6 +167,11 @@ export default function Register() {
               message: "БИН должен содержать 12 цифр",
             },
           })}
+          slotProps={{
+            inputLabel: {
+              shrink: !!bin,
+            },
+          }}
         />
 
         <TextField
@@ -166,6 +209,11 @@ export default function Register() {
               message: "Некорректный email",
             },
           })}
+          slotProps={{
+            inputLabel: {
+              shrink: !!email,
+            },
+          }}
         />
 
         <TextField
