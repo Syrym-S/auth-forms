@@ -47,7 +47,7 @@ export default function Login() {
         window.location.href = redirectUrl;
         return;
       } else {
-         window.location.href = isStaging ? "/staging/driver" : "/driver";
+        window.location.href = isStaging ? "/staging/driver" : "/driver";
       }
     } catch (e) {
       setError(e?.response?.data?.error || e?.message || "Ошибка авторизации");
