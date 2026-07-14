@@ -79,8 +79,6 @@ export default function Register() {
 
       const data = response.data;
 
-      // setValuesFromInviteLink(data);
-
       reset({
         company_name: data.full_name ?? "",
         bin: data.bin ?? "",
@@ -103,7 +101,6 @@ export default function Register() {
   };
 
   useEffect(() => {
-    console.log("useEffect отработал");
     fetchClaimInfo();
   }, []);
 

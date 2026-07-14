@@ -5,25 +5,37 @@ import {
   Typography,
   Divider,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AuthLayout from "../components/AuthLayout";
 import { useRegister } from "../context/RegisterContext";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router-dom";
+import { getClaimInfoApi } from "../../api/auth";
 
 export default function Register() {
   const navigate = useNavigate();
   const { form, updateStep } = useRegister();
+  const { search } = useLocation();
+
+  const claimCode = new URLSearchParams(search).get("claim");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: form,
   });
+
+  const fio = watch("fullName");
+  const email = watch("email");
 
   const onSubmit = (data) => {
     if (data.password !== data.confirmPassword) {
@@ -33,6 +45,36 @@ export default function Register() {
     updateStep(data);
     navigate("/register/citizen");
   };
+
+  const fetchClaimInfo = async () => {
+    try {
+      setIsLoading(true);
+
+      const response = await getClaimInfoApi(claimCode);
+
+      const data = response.data;
+
+      console.log(data);
+
+      reset({
+        fullName: data.fio ?? "",
+        email: data.email ?? "",
+      });
+
+      setIsLoading(false);
+    } catch (e) {
+      setError(
+        e?.response?.data?.error ||
+          e?.message ||
+          "Ошибка c получением claim code",
+      );
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchClaimInfo();
+  }, []);
 
   return (
     <AuthLayout>
@@ -51,7 +93,14 @@ export default function Register() {
         }}
       >
         Регистрация
+        {isLoading && <CircularProgress size={16} sx={{ pl: 2 }} />}
       </Typography>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextField
@@ -63,6 +112,11 @@ export default function Register() {
           {...register("fullName", {
             required: "Введите ФИО",
           })}
+          slotProps={{
+            inputLabel: {
+              shrink: !!fio,
+            },
+          }}
         />
 
         <TextField
@@ -78,6 +132,11 @@ export default function Register() {
               message: "Некорректный Email",
             },
           })}
+          slotProps={{
+            inputLabel: {
+              shrink: !!email,
+            },
+          }}
         />
 
         <TextField
