@@ -5,15 +5,15 @@ import {
   Typography,
   Divider,
   Alert,
-} from '@mui/material';
-import { Link } from 'react-router-dom';
-import AuthLayout from '../components/AuthLayout';
-import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { registerRequest } from '../../api/auth';
+} from "@mui/material";
+import { Link } from "react-router-dom";
+import AuthLayout from "../components/AuthLayout";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { registerRequest } from "../../api/auth";
 
 export default function Register() {
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const {
     register,
@@ -22,7 +22,7 @@ export default function Register() {
   } = useForm();
 
   const onSubmit = async (data) => {
-    setError('');
+    setError("");
 
     try {
       const payload = {
@@ -33,6 +33,7 @@ export default function Register() {
         company_bik: data.companyBik,
         company_account: data.companyAccount,
         company_address: data.companyAddress,
+        iin: data.iin,
         fio: data.fio,
         phone: data.phone,
         document_number: data.documentNumber,
@@ -41,7 +42,7 @@ export default function Register() {
 
       await registerRequest(payload);
     } catch (e) {
-      setError(e?.message || 'Ошибка регистрации');
+      setError(e?.message || "Ошибка регистрации");
     }
   };
 
@@ -52,8 +53,8 @@ export default function Register() {
         mb={2}
         sx={{
           fontSize: {
-            xs: '2rem',
-            md: '1.5rem',
+            xs: "2rem",
+            md: "1.5rem",
           },
           fontWeight: {
             xs: 600,
@@ -73,12 +74,23 @@ export default function Register() {
           margin="normal"
           error={!!errors.email}
           helperText={errors.email?.message}
-          {...register('email', {
-            required: 'Введите email',
+          {...register("email", {
+            required: "Введите email",
             pattern: {
               value: /^\S+@\S+\.\S+$/,
-              message: 'Некорректный email',
+              message: "Некорректный email",
             },
+          })}
+        />
+
+        <TextField
+          fullWidth
+          label="ИИН"
+          margin="normal"
+          error={!!errors.iin}
+          helperText={errors.iin?.message}
+          {...register("iin", {
+            required: "Введите ИИН",
           })}
         />
 
@@ -89,11 +101,11 @@ export default function Register() {
           margin="normal"
           error={!!errors.password}
           helperText={errors.password?.message}
-          {...register('password', {
-            required: 'Введите пароль',
+          {...register("password", {
+            required: "Введите пароль",
             minLength: {
               value: 6,
-              message: 'Минимум 6 символов',
+              message: "Минимум 6 символов",
             },
           })}
         />
@@ -104,8 +116,8 @@ export default function Register() {
           margin="normal"
           error={!!errors.companyName}
           helperText={errors.companyName?.message}
-          {...register('companyName', {
-            required: 'Введите название компании',
+          {...register("companyName", {
+            required: "Введите название компании",
           })}
         />
 
@@ -115,11 +127,11 @@ export default function Register() {
           margin="normal"
           error={!!errors.companyBin}
           helperText={errors.companyBin?.message}
-          {...register('companyBin', {
-            required: 'Введите БИН компании',
+          {...register("companyBin", {
+            required: "Введите БИН компании",
             minLength: {
               value: 12,
-              message: 'БИН должен содержать минимум 12 символов',
+              message: "БИН должен содержать минимум 12 символов",
             },
           })}
         />
@@ -130,8 +142,8 @@ export default function Register() {
           margin="normal"
           error={!!errors.companyBik}
           helperText={errors.companyBik?.message}
-          {...register('companyBik', {
-            required: 'Введите БИК компании',
+          {...register("companyBik", {
+            required: "Введите БИК компании",
           })}
         />
 
@@ -141,8 +153,8 @@ export default function Register() {
           margin="normal"
           error={!!errors.companyAccount}
           helperText={errors.companyAccount?.message}
-          {...register('companyAccount', {
-            required: 'Введите расчетный счет',
+          {...register("companyAccount", {
+            required: "Введите расчетный счет",
           })}
         />
 
@@ -152,8 +164,8 @@ export default function Register() {
           margin="normal"
           error={!!errors.companyAddress}
           helperText={errors.companyAddress?.message}
-          {...register('companyAddress', {
-            required: 'Введите адрес компании',
+          {...register("companyAddress", {
+            required: "Введите адрес компании",
           })}
         />
 
@@ -163,8 +175,8 @@ export default function Register() {
           margin="normal"
           error={!!errors.fio}
           helperText={errors.fio?.message}
-          {...register('fio', {
-            required: 'Введите ФИО',
+          {...register("fio", {
+            required: "Введите ФИО",
           })}
         />
 
@@ -174,11 +186,11 @@ export default function Register() {
           margin="normal"
           error={!!errors.phone}
           helperText={errors.phone?.message}
-          {...register('phone', {
-            required: 'Введите телефон',
+          {...register("phone", {
+            required: "Введите телефон",
             pattern: {
               value: /^\+?[0-9]{10,15}$/,
-              message: 'Некорректный номер телефона',
+              message: "Некорректный номер телефона",
             },
           })}
         />
@@ -189,8 +201,8 @@ export default function Register() {
           margin="normal"
           error={!!errors.documentNumber}
           helperText={errors.documentNumber?.message}
-          {...register('documentNumber', {
-            required: 'Введите номер документа',
+          {...register("documentNumber", {
+            required: "Введите номер документа",
           })}
         />
 
@@ -200,8 +212,8 @@ export default function Register() {
           margin="normal"
           error={!!errors.issueCountry}
           helperText={errors.issueCountry?.message}
-          {...register('issueCountry', {
-            required: 'Введите страну выдачи',
+          {...register("issueCountry", {
+            required: "Введите страну выдачи",
           })}
         />
 
