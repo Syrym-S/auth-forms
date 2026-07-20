@@ -14,6 +14,7 @@ import { getClaimInfoApi, registerRequest } from "../../api/auth";
 import { useRegister } from "../context/InviteContext";
 import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
+import { isStaging } from "../../api/client";
 
 export default function Register() {
   const { invite } = useRegister();
@@ -32,9 +33,12 @@ export default function Register() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
-    defaultValues: {
+   defaultValues: {
       company_name: "",
       bin: "",
+      fio: "",
+      phone: "",
+      iin: "",
       document_number: "",
       issue_country: "",
       email: "",
@@ -65,13 +69,18 @@ export default function Register() {
 
       console.log("REGISTER SUCCESS", res.data);
 
-      window.location.href = "/customer";
+      window.location.href = isStaging ? "/staging/customer" : 'customer';
+      
     } catch (e) {
       setError(e?.response?.data?.error || e?.message || "Ошибка регистрации");
     }
   };
 
-  const fetchClaimInfo = async () => {
+ const fetchClaimInfo = async () => {
+    if (!claimCode) {
+      return;
+    }
+
     try {
       setIsLoading(true);
 
@@ -82,27 +91,30 @@ export default function Register() {
       reset({
         company_name: data.full_name ?? "",
         bin: data.bin ?? "",
+        fio: data?.person?.fio ?? "",
+        phone: data?.person?.phone ?? "",
+        iin: data?.person?.iin ?? "",
         document_number: "",
         issue_country: data.issue_country ?? "",
         email: data?.person?.email ?? "",
         password: "",
         password_confirm: "",
       });
-
-      setIsLoading(false);
     } catch (e) {
       setError(
         e?.response?.data?.error ||
+          e?.response?.data?.message ||
           e?.message ||
           "Ошибка c получением claim code",
       );
+    } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchClaimInfo();
-  }, []);
+  }, [claimCode]);
 
   return (
     <AuthLayout>
@@ -169,6 +181,55 @@ export default function Register() {
               shrink: !!bin,
             },
           }}
+        />
+
+        <TextField
+          fullWidth
+          label="ФИО"
+          margin="normal"
+          error={!!errors.fio}
+          helperText={errors.fio?.message}
+          {...register("fio", {
+            required: "Введите ФИО",
+          })}
+        />
+
+        <TextField
+          fullWidth
+          label="Телефон"
+          margin="normal"
+          error={!!errors.phone}
+          helperText={errors.phone?.message}
+          {...register("phone", {
+            required: "Введите телефон",
+            pattern: {
+              value: /^\+?[0-9]{10,15}$/,
+              message: "Некорректный номер телефона",
+            },
+          })}
+        />
+
+        <TextField
+          fullWidth
+          label="ИИН"
+          margin="normal"
+          error={!!errors.iin}
+          helperText={errors.iin?.message}
+          {...register("iin", {
+            required: "Введите ИИН",
+            minLength: {
+              value: 12,
+              message: "ИИН должен содержать 12 цифр",
+            },
+            maxLength: {
+              value: 12,
+              message: "ИИН должен содержать 12 цифр",
+            },
+            pattern: {
+              value: /^[0-9]{12}$/,
+              message: "ИИН должен содержать только 12 цифр",
+            },
+          })}
         />
 
         <TextField
