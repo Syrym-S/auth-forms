@@ -38,15 +38,13 @@ export default function Login() {
 
       const res = await loginRequest(payload);
 
-      const redirectUrl =
-        res?.redirect_url ||
-        res?.data?.redirect_url;
+      const redirectUrl = res?.redirect_url || res?.data?.redirect_url;
 
       if (redirectUrl) {
         window.location.href = redirectUrl;
         return;
       } else {
-         window.location.href = isStaging ? "/staging/factor" : "/factor";
+        window.location.href = isStaging ? '/staging/factor' : '/factor';
       }
     } catch (error) {
       setError(
@@ -115,6 +113,17 @@ export default function Login() {
             },
           })}
         />
+
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+          <Button
+            component={Link}
+            to="/forgot-password"
+            size="small"
+            sx={{ px: 0 }}
+          >
+            Забыли пароль?
+          </Button>
+        </Box>
 
         <Button
           fullWidth

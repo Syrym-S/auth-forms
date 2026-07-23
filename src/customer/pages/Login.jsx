@@ -110,6 +110,17 @@ export default function Login() {
           })}
         />
 
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
+          <Button
+            component={Link}
+            to="/forgot-password"
+            size="small"
+            sx={{ px: 0 }}
+          >
+            Забыли пароль?
+          </Button>
+        </Box>
+
         <Button
           fullWidth
           type="submit"

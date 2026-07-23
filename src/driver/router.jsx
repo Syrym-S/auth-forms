@@ -4,12 +4,14 @@ import {
   Route,
   Navigate,
   useLocation,
-} from "react-router-dom";
+} from 'react-router-dom';
 
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Citizen from "./pages/RegisterCitizen";
-import Legal from "./pages/RegisterLegal";
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Citizen from './pages/RegisterCitizen';
+import Legal from './pages/RegisterLegal';
+import ForgotPassword from './pages/password/ForgotPassword';
+import ResetPassword from './pages/password/ResetPassword';
 
 function getAppData() {
   return window.APP_DATA || window.app_data || {};
@@ -17,13 +19,13 @@ function getAppData() {
 
 function getIsStaging() {
   return (
-    getAppData().mode === "staging" ||
-    window.location.pathname.startsWith("/staging/")
+    getAppData().mode === 'staging' ||
+    window.location.pathname.startsWith('/staging/')
   );
 }
 
 function getAuthBasename() {
-  return getIsStaging() ? "/staging/auth" : "/auth";
+  return getIsStaging() ? '/staging/auth' : '/auth';
 }
 
 // для сохранение данных invite
@@ -44,6 +46,8 @@ export default function DriverRouter() {
         <Route path="/register" element={<Register />} />
         <Route path="/register/citizen" element={<Citizen />} />
         <Route path="/register/legal" element={<Legal />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </BrowserRouter>
   );

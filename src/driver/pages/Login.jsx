@@ -5,16 +5,16 @@ import {
   Typography,
   Divider,
   Alert,
-} from "@mui/material";
-import { Link } from "react-router-dom";
-import AuthLayout from "../components/AuthLayout";
-import { useState } from "react";
-import { loginRequest } from "../../api/auth";
-import { useForm } from "react-hook-form";
-import { isStaging } from "../../api/client";
+} from '@mui/material';
+import { Link } from 'react-router-dom';
+import AuthLayout from '../components/AuthLayout';
+import { useState } from 'react';
+import { loginRequest } from '../../api/auth';
+import { useForm } from 'react-hook-form';
+import { isStaging } from '../../api/client';
 
 export default function Login() {
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const {
     register,
@@ -22,13 +22,13 @@ export default function Login() {
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
   const onSubmit = async (data) => {
-    setError("");
+    setError('');
 
     try {
       const res = await loginRequest(data);
@@ -37,20 +37,18 @@ export default function Login() {
         throw new Error(res.data.error);
       }
 
-      console.log("LOGIN SUCCESS", res.data);
+      console.log('LOGIN SUCCESS', res.data);
 
-      const redirectUrl =
-        res?.redirect_url ||
-        res?.data?.redirect_url;
+      const redirectUrl = res?.redirect_url || res?.data?.redirect_url;
 
       if (redirectUrl) {
         window.location.href = redirectUrl;
         return;
       } else {
-        window.location.href = isStaging ? "/staging/driver" : "/driver";
+        window.location.href = isStaging ? '/staging/driver' : '/driver';
       }
     } catch (e) {
-      setError(e?.response?.data?.error || e?.message || "Ошибка авторизации");
+      setError(e?.response?.data?.error || e?.message || 'Ошибка авторизации');
     }
   };
 
@@ -61,8 +59,8 @@ export default function Login() {
         mb={2}
         sx={{
           fontSize: {
-            xs: "2rem",
-            md: "1.5rem",
+            xs: '2rem',
+            md: '1.5rem',
           },
           fontWeight: {
             xs: 600,
@@ -86,11 +84,11 @@ export default function Login() {
           margin="normal"
           error={!!errors.email}
           helperText={errors.email?.message}
-          {...register("email", {
-            required: "Введите email",
+          {...register('email', {
+            required: 'Введите email',
             pattern: {
               value: /^\S+@\S+\.\S+$/,
-              message: "Некорректный email",
+              message: 'Некорректный email',
             },
           })}
         />
@@ -102,14 +100,25 @@ export default function Login() {
           margin="normal"
           error={!!errors.password}
           helperText={errors.password?.message}
-          {...register("password", {
-            required: "Введите пароль",
+          {...register('password', {
+            required: 'Введите пароль',
             minLength: {
               value: 6,
-              message: "Минимум 6 символов",
+              message: 'Минимум 6 символов',
             },
           })}
         />
+
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
+          <Button
+            component={Link}
+            to="/forgot-password"
+            size="small"
+            sx={{ px: 0 }}
+          >
+            Забыли пароль?
+          </Button>
+        </Box>
 
         <Button
           fullWidth
@@ -118,7 +127,7 @@ export default function Login() {
           sx={{ mt: 2 }}
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Загрузка..." : "Зайти"}
+          {isSubmitting ? 'Загрузка...' : 'Зайти'}
         </Button>
       </Box>
 
