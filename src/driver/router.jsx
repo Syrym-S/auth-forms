@@ -12,6 +12,7 @@ import Citizen from './pages/RegisterCitizen';
 import Legal from './pages/RegisterLegal';
 import ForgotPassword from './pages/password/ForgotPassword';
 import ResetPassword from './pages/password/ResetPassword';
+import Documents from './pages/RegisterDocuments';
 
 function getAppData() {
   return window.APP_DATA || window.app_data || {};
@@ -46,6 +47,7 @@ export default function DriverRouter() {
         <Route path="/register" element={<Register />} />
         <Route path="/register/citizen" element={<Citizen />} />
         <Route path="/register/legal" element={<Legal />} />
+        <Route path="/register/documents" element={<Documents />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
