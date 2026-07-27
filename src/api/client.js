@@ -12,7 +12,6 @@ const nonce = window?.APP_DATA?.nonce || "";
 export const api = axios.create({
   baseURL,
   headers: {
-    "Content-Type": "application/json",
     ...(nonce && { "X-WP-Nonce": nonce }),
   },
 });
