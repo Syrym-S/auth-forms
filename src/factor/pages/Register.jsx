@@ -5,12 +5,18 @@ import {
   Typography,
   Divider,
   Alert,
+  CircularProgress,
+  FormHelperText,
+  IconButton,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { registerRequest } from "../../api/auth";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 export default function Register() {
   const [error, setError] = useState("");
@@ -19,28 +25,55 @@ export default function Register() {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
+    setValue,
   } = useForm();
 
+  const legalEntityRegistrationDocument = watch(
+    "legalEntityRegistrationDocument",
+  );
+  const employeeEmploymentDocument = watch("employeeEmploymentDocument");
+
+  console.log("туц deplow");
   const onSubmit = async (data) => {
     setError("");
 
-    try {
-      const payload = {
-        email: data.email,
-        password: data.password,
-        company_name: data.companyName,
-        company_bin: data.companyBin,
-        company_bik: data.companyBik,
-        company_account: data.companyAccount,
-        company_address: data.companyAddress,
-        iin: data.iin,
-        fio: data.fio,
-        phone: data.phone,
-        document_number: data.documentNumber,
-        issue_country: data.issueCountry,
-      };
+    console.log(data);
 
-      await registerRequest(payload);
+    try {
+      const formData = new FormData();
+
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      formData.append("company_name", data.companyName);
+      formData.append("company_bin", data.companyBin);
+      formData.append("company_bik", data.companyBik);
+      formData.append("company_account", data.companyAccount);
+      formData.append("company_address", data.companyAddress);
+      formData.append("iin", data.iin);
+      formData.append("fio", data.fio);
+      formData.append("phone", data.phone);
+      formData.append("document_number", data.documentNumber);
+      formData.append("issue_country", data.issueCountry);
+
+      formData.append(
+        "registration_document",
+        data.legalEntityRegistrationDocument[0],
+      );
+
+      formData.append(
+        "registration_document_name",
+        "Документ о регистрации юридического лица",
+      );
+
+      formData.append("employer_document", data.employeeEmploymentDocument[0]);
+
+      formData.append(
+        "employer_document_name",
+        "Документ о трудоустройстве сотрудника с правом подписи или приказ о назначении первого руководителя",
+      );
+
+      await registerRequest(formData);
     } catch (e) {
       setError(e?.message || "Ошибка регистрации");
     }
@@ -205,6 +238,266 @@ export default function Register() {
             required: "Введите номер документа",
           })}
         />
+
+        <Box
+          sx={{
+            border: "1px solid",
+            my: 1,
+            borderColor: errors.legalEntityRegistrationDocument
+              ? "error.main"
+              : "divider",
+            borderRadius: 2,
+            p: 2,
+            transition: "0.2s",
+            "&:hover": {
+              borderColor: "primary.main",
+              backgroundColor: "action.hover",
+            },
+          }}
+        >
+          <Typography
+            sx={{
+              color: "rgba(0, 0, 0, 0.6)",
+              fontSize: "1rem",
+              lineHeight: 1.4375,
+              letterSpacing: "0.00938em",
+              fontWeight: 400,
+            }}
+          >
+            Документ о регистрации юридического лица
+          </Typography>
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<UploadFileIcon />}
+          >
+            Выбрать файл
+            <input
+              hidden
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              {...register("legalEntityRegistrationDocument", {
+                required: "Документ о регистрации юридического лица обязателен",
+              })}
+            />
+          </Button>
+
+          {legalEntityRegistrationDocument?.[0] && (
+            <Box
+              sx={{
+                mt: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                p: 1.5,
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 2,
+                backgroundColor: "background.paper",
+              }}
+            >
+              {legalEntityRegistrationDocument[0].type.startsWith("image/") ? (
+                <Box
+                  component="img"
+                  src={URL.createObjectURL(legalEntityRegistrationDocument[0])}
+                  alt={legalEntityRegistrationDocument[0].name}
+                  sx={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: 1,
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    width: 56,
+                    height: 56,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 1,
+                    backgroundColor: "action.hover",
+                  }}
+                >
+                  <InsertDriveFileOutlinedIcon
+                    color="primary"
+                    fontSize="large"
+                  />
+                </Box>
+              )}
+
+              <Box
+                sx={{
+                  minWidth: 0,
+                  flex: 1,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  fontWeight={500}
+                  noWrap
+                  title={legalEntityRegistrationDocument[0].name}
+                >
+                  {legalEntityRegistrationDocument[0].name}
+                </Typography>
+
+                <Typography variant="caption" color="text.secondary">
+                  {(
+                    legalEntityRegistrationDocument[0].size /
+                    1024 /
+                    1024
+                  ).toFixed(2)}{" "}
+                  MB
+                </Typography>
+              </Box>
+
+              <IconButton
+                color="error"
+                onClick={() =>
+                  setValue("legalEntityRegistrationDocument", null)
+                }
+              >
+                <DeleteOutlineOutlinedIcon />
+              </IconButton>
+            </Box>
+          )}
+
+          {errors.legalEntityRegistrationDocument && (
+            <FormHelperText error>
+              {errors.legalEntityRegistrationDocument.message}
+            </FormHelperText>
+          )}
+        </Box>
+
+        <Box
+          sx={{
+            border: "1px solid",
+            my: 1,
+            borderColor: errors.employeeEmploymentDocument
+              ? "error.main"
+              : "divider",
+            borderRadius: 2,
+            p: 2,
+            transition: "0.2s",
+            "&:hover": {
+              borderColor: "primary.main",
+              backgroundColor: "action.hover",
+            },
+          }}
+        >
+          <Typography
+            sx={{
+              color: "rgba(0, 0, 0, 0.6)",
+              fontSize: "1rem",
+              lineHeight: 1.4375,
+              letterSpacing: "0.00938em",
+              fontWeight: 400,
+            }}
+          >
+            Документ о трудоустройстве сотрудника
+          </Typography>
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<UploadFileIcon />}
+          >
+            Выбрать файл
+            <input
+              hidden
+              type="file"
+              accept=".pdf,.jpg,.jpeg,.png"
+              {...register("employeeEmploymentDocument", {
+                required: "Документ о трудоустройстве сотрудника обязателен",
+              })}
+            />
+          </Button>
+
+          {employeeEmploymentDocument?.[0] && (
+            <Box
+              sx={{
+                mt: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                p: 1.5,
+                border: "1px solid",
+                borderColor: "divider",
+                borderRadius: 2,
+                backgroundColor: "background.paper",
+              }}
+            >
+              {employeeEmploymentDocument[0].type.startsWith("image/") ? (
+                <Box
+                  component="img"
+                  src={URL.createObjectURL(employeeEmploymentDocument[0])}
+                  alt={employeeEmploymentDocument[0].name}
+                  sx={{
+                    width: 56,
+                    height: 56,
+                    borderRadius: 1,
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <Box
+                  sx={{
+                    width: 56,
+                    height: 56,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 1,
+                    backgroundColor: "action.hover",
+                  }}
+                >
+                  <InsertDriveFileOutlinedIcon
+                    color="primary"
+                    fontSize="large"
+                  />
+                </Box>
+              )}
+
+              <Box
+                sx={{
+                  minWidth: 0,
+                  flex: 1,
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  fontWeight={500}
+                  noWrap
+                  title={employeeEmploymentDocument[0].name}
+                >
+                  {employeeEmploymentDocument[0].name}
+                </Typography>
+
+                <Typography variant="caption" color="text.secondary">
+                  {(employeeEmploymentDocument[0].size / 1024 / 1024).toFixed(
+                    2,
+                  )}{" "}
+                  MB
+                </Typography>
+              </Box>
+
+              <IconButton
+                color="error"
+                onClick={() => setValue("employeeEmploymentDocument", null)}
+              >
+                <DeleteOutlineOutlinedIcon />
+              </IconButton>
+            </Box>
+          )}
+
+          {errors.employeeEmploymentDocument && (
+            <FormHelperText error>
+              {errors.employeeEmploymentDocument.message}
+            </FormHelperText>
+          )}
+        </Box>
 
         <TextField
           fullWidth
