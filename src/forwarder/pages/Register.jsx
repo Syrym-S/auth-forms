@@ -91,14 +91,16 @@ export default function Register() {
       email: "",
       password: "",
       confirmPassword: "",
+      registration_document: "",
+      registration_document_name: "",
+      employer_document: "",
+      employer_document_name: "",
     },
   });
 
   const password = watch("password");
-  const legalEntityRegistrationDocument = watch(
-    "legalEntityRegistrationDocument",
-  );
-  const employeeEmploymentDocument = watch("employeeEmploymentDocument");
+  const registration_document = watch("registration_document");
+  const employer_document = watch("employer_document");
 
   useEffect(() => {
     if (!claim) {
@@ -146,7 +148,11 @@ export default function Register() {
   const onSubmit = async (data) => {
     setError("");
 
+    console.log(data);
+
     try {
+      const formData = new FormData();
+
       const payload = {
         bin: data.bin,
         company_name: data.companyName,
@@ -161,7 +167,25 @@ export default function Register() {
         ...(claim ? { invite: claim } : {}),
       };
 
-      const res = await registerRequest(payload);
+      formData.append("registration_document", data.registration_document[0]);
+
+      formData.append(
+        "registration_document_name",
+        "Документ о регистрации юридического лица",
+      );
+
+      formData.append("employer_document", data.employer_document[0]);
+
+      formData.append(
+        "employer_document_name",
+        "Документ о трудоустройстве сотрудника с правом подписи или приказ о назначении первого руководителя",
+      );
+
+      Object.entries(payload).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
+
+      const res = await registerRequest(formData);
 
       const redirectUrl = res?.redirect_url || res?.data?.redirect_url;
 
@@ -352,7 +376,7 @@ export default function Register() {
             sx={{
               border: "1px solid",
               my: 1,
-              borderColor: errors.legalEntityRegistrationDocument
+              borderColor: errors.registration_document
                 ? "error.main"
                 : "divider",
               borderRadius: 2,
@@ -386,14 +410,14 @@ export default function Register() {
                 hidden
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
-                {...register("legalEntityRegistrationDocument", {
+                {...register("registration_document", {
                   required:
                     "Документ о регистрации юридического лица обязателен",
                 })}
               />
             </Button>
 
-            {legalEntityRegistrationDocument?.[0] && (
+            {registration_document?.[0] && (
               <Box
                 sx={{
                   mt: 2,
@@ -407,15 +431,11 @@ export default function Register() {
                   backgroundColor: "background.paper",
                 }}
               >
-                {legalEntityRegistrationDocument[0].type.startsWith(
-                  "image/",
-                ) ? (
+                {registration_document[0].type.startsWith("image/") ? (
                   <Box
                     component="img"
-                    src={URL.createObjectURL(
-                      legalEntityRegistrationDocument[0],
-                    )}
-                    alt={legalEntityRegistrationDocument[0].name}
+                    src={URL.createObjectURL(registration_document[0])}
+                    alt={registration_document[0].name}
                     sx={{
                       width: 56,
                       height: 56,
@@ -452,35 +472,29 @@ export default function Register() {
                     variant="body2"
                     fontWeight={500}
                     noWrap
-                    title={legalEntityRegistrationDocument[0].name}
+                    title={registration_document[0].name}
                   >
-                    {legalEntityRegistrationDocument[0].name}
+                    {registration_document[0].name}
                   </Typography>
 
                   <Typography variant="caption" color="text.secondary">
-                    {(
-                      legalEntityRegistrationDocument[0].size /
-                      1024 /
-                      1024
-                    ).toFixed(2)}{" "}
+                    {(registration_document[0].size / 1024 / 1024).toFixed(2)}{" "}
                     MB
                   </Typography>
                 </Box>
 
                 <IconButton
                   color="error"
-                  onClick={() =>
-                    setValue("legalEntityRegistrationDocument", null)
-                  }
+                  onClick={() => setValue("registration_document", null)}
                 >
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </Box>
             )}
 
-            {errors.legalEntityRegistrationDocument && (
+            {errors.registration_document && (
               <FormHelperText error>
-                {errors.legalEntityRegistrationDocument.message}
+                {errors.registration_document.message}
               </FormHelperText>
             )}
           </Box>
@@ -489,9 +503,7 @@ export default function Register() {
             sx={{
               border: "1px solid",
               my: 1,
-              borderColor: errors.employeeEmploymentDocument
-                ? "error.main"
-                : "divider",
+              borderColor: errors.employer_document ? "error.main" : "divider",
               borderRadius: 2,
               p: 2,
               transition: "0.2s",
@@ -523,13 +535,13 @@ export default function Register() {
                 hidden
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
-                {...register("employeeEmploymentDocument", {
+                {...register("employer_document", {
                   required: "Документ о трудоустройстве сотрудника обязателен",
                 })}
               />
             </Button>
 
-            {employeeEmploymentDocument?.[0] && (
+            {employer_document?.[0] && (
               <Box
                 sx={{
                   mt: 2,
@@ -543,11 +555,11 @@ export default function Register() {
                   backgroundColor: "background.paper",
                 }}
               >
-                {employeeEmploymentDocument[0].type.startsWith("image/") ? (
+                {employer_document[0].type.startsWith("image/") ? (
                   <Box
                     component="img"
-                    src={URL.createObjectURL(employeeEmploymentDocument[0])}
-                    alt={employeeEmploymentDocument[0].name}
+                    src={URL.createObjectURL(employer_document[0])}
+                    alt={employer_document[0].name}
                     sx={{
                       width: 56,
                       height: 56,
@@ -584,31 +596,28 @@ export default function Register() {
                     variant="body2"
                     fontWeight={500}
                     noWrap
-                    title={employeeEmploymentDocument[0].name}
+                    title={employer_document[0].name}
                   >
-                    {employeeEmploymentDocument[0].name}
+                    {employer_document[0].name}
                   </Typography>
 
                   <Typography variant="caption" color="text.secondary">
-                    {(employeeEmploymentDocument[0].size / 1024 / 1024).toFixed(
-                      2,
-                    )}{" "}
-                    MB
+                    {(employer_document[0].size / 1024 / 1024).toFixed(2)} MB
                   </Typography>
                 </Box>
 
                 <IconButton
                   color="error"
-                  onClick={() => setValue("employeeEmploymentDocument", null)}
+                  onClick={() => setValue("employer_document", null)}
                 >
                   <DeleteOutlineOutlinedIcon />
                 </IconButton>
               </Box>
             )}
 
-            {errors.employeeEmploymentDocument && (
+            {errors.employer_document && (
               <FormHelperText error>
-                {errors.employeeEmploymentDocument.message}
+                {errors.employer_document.message}
               </FormHelperText>
             )}
           </Box>
