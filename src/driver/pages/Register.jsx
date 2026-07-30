@@ -172,6 +172,14 @@ export default function Register() {
         <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
           Дальше
         </Button>
+
+        <Box mt={3}>
+          <Divider sx={{ mb: 2 }} />
+
+          <Button component={Link} to="/login" fullWidth variant="outlined">
+            Войти
+          </Button>
+        </Box>
       </form>
     </AuthLayout>
   );

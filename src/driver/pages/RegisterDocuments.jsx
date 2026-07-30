@@ -15,7 +15,8 @@ import { useForm } from 'react-hook-form';
 
 import AuthLayout from '../components/AuthLayout';
 import { useRegister } from '../context/RegisterContext';
-import { registerRequest } from '../../api/auth';
+import { registerRequestDriver } from '../../api/auth';
+import { saveAuthData } from '../services/authStorage';
 
 const REGISTRATION_DOCUMENT_NAME =
   'Документ о регистрации юридического лица';
@@ -145,13 +146,13 @@ export default function RegisterDocuments() {
         payload.append('employer_document_name', EMPLOYER_DOCUMENT_NAME);
       }
 
-      const res = await registerRequest(payload);
+      const res = await registerRequestDriver(payload);
 
       if (res.data?.error) {
         throw new Error(res.data.error);
       }
 
-      console.log('REGISTER SUCCESS', res.data);
+      saveAuthData(res.data);
 
       window.location.href = '/driver';
     } catch (e) {

@@ -13,12 +13,15 @@ import { useState } from 'react';
 import AuthLayout from '../components/AuthLayout';
 import { useRegister } from '../context/RegisterContext';
 import { useForm } from 'react-hook-form';
+import { registerRequestDriver } from '../../api/auth';
+import { saveAuthData } from '../services/authStorage';
 
 export default function RegisterLegal() {
   const navigate = useNavigate();
   const { form, updateStep } = useRegister();
 
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const { register, handleSubmit, watch } = useForm({
     defaultValues: form,
@@ -26,11 +29,49 @@ export default function RegisterLegal() {
 
   const isIP = watch('isIP');
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     setError('');
 
     updateStep(data);
-    navigate('/register/documents');
+
+    if (data.isIP) {
+      navigate('/register/documents');
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const payload = {
+        fio: form.fullName,
+        email: form.email,
+        password: form.password,
+        password_confirm: form.confirmPassword,
+        is_foreigner: form.isForeign,
+        is_ip: data.isIP,
+      };
+
+      if (form.docNumber) payload.document_number = form.docNumber;
+      if (form.issueCountry) payload.issue_country = form.issueCountry;
+      if (form.iin) payload.iin = form.iin;
+      if (form.docIssuer) payload.docIssuer = form.docIssuer;
+      if (form.docDate) payload.docDate = form.docDate;
+      if (form.invite) payload.invite = form.invite;
+
+      const res = await registerRequestDriver(payload);
+
+      if (res.data?.error) {
+        throw new Error(res.data.error);
+      }
+
+      saveAuthData(res.data);
+
+      window.location.href = '/driver';
+    } catch (e) {
+      setError(e?.response?.data?.error || e.message || 'Ошибка регистрации');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -80,8 +121,8 @@ export default function RegisterLegal() {
           {...register('ipIIN')}
         />
 
-        <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
-          Дальше
+        <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit" disabled={loading}>
+          {loading ? 'Загрузка...' : (isIP ? 'Дальше' : 'Зарегистрироваться')}
         </Button>
       </form>
 

@@ -9,9 +9,10 @@ import {
 import { Link } from 'react-router-dom';
 import AuthLayout from '../components/AuthLayout';
 import { useState } from 'react';
-import { loginRequest } from '../../api/auth';
+import { loginRequestDriver } from '../../api/auth';
 import { useForm } from 'react-hook-form';
 import { isStaging } from '../../api/client';
+import { saveAuthData } from '../services/authStorage';
 
 export default function Login() {
   const [error, setError] = useState('');
@@ -31,13 +32,14 @@ export default function Login() {
     setError('');
 
     try {
-      const res = await loginRequest(data);
+      const res = await loginRequestDriver(data);
 
       if (res.data?.error) {
         throw new Error(res.data.error);
       }
 
-      console.log('LOGIN SUCCESS', res.data);
+      console.log('LOGIN RESPONSE', JSON.stringify(res.data, null, 2));
+      saveAuthData(res.data);
 
       const redirectUrl = res?.redirect_url || res?.data?.redirect_url;
 

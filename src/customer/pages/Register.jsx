@@ -51,6 +51,10 @@ export default function Register() {
     defaultValues: {
       company_name: '',
       bin: '',
+      bik: '',
+      bank_name: '',
+      iik: '',
+      legal_address: '',
       fio: '',
       phone: '',
       iin: '',
@@ -101,7 +105,9 @@ export default function Register() {
 
       payload.append('company_name', data.company_name);
       payload.append('bin', data.bin);
-      payload.append('fio', data.fio);
+      payload.append('company_name', data.company_name);
+      payload.append('bin', data.bin);
+      payload.append('legal_address', data.legal_address);
       payload.append('phone', data.phone);
       payload.append('iin', data.iin);
       payload.append('document_number', data.document_number);
@@ -112,6 +118,18 @@ export default function Register() {
 
       if (invite) {
         payload.append('invite', invite);
+      }
+
+      if (data.bik) {
+        payload.append('bik', data.bik);
+      }
+
+      if (data.bank_name) {
+        payload.append('bank_name', data.bank_name);
+      }
+
+      if (data.iik) {
+        payload.append('iik', data.iik);
       }
 
       if (registrationDocumentFile) {
@@ -164,6 +182,10 @@ export default function Register() {
       reset({
         company_name: data.full_name ?? '',
         bin: data.bin ?? '',
+        bik: data.bik ?? '',
+        bank_name: data.bank_name ?? '',
+        iik: data.iik ?? '',
+        legal_address: data.legal_address ?? '',
         fio: data?.person?.fio ?? '',
         phone: data?.person?.phone ?? '',
         iin: data?.person?.iin ?? '',
@@ -256,6 +278,44 @@ export default function Register() {
               shrink: !!bin,
             },
           }}
+        />
+
+        <TextField
+          fullWidth
+          label="БИК компании"
+          margin="normal"
+          error={!!errors.bik}
+          helperText={errors.bik?.message}
+          {...register('bik')}
+        />
+
+        <TextField
+          fullWidth
+          label="Банк компании"
+          margin="normal"
+          error={!!errors.bank_name}
+          helperText={errors.bank_name?.message}
+          {...register('bank_name')}
+        />
+
+        <TextField
+          fullWidth
+          label="ИИК"
+          margin="normal"
+          error={!!errors.iik}
+          helperText={errors.iik?.message}
+          {...register('iik')}
+        />
+
+        <TextField
+          fullWidth
+          label="Юридический адрес"
+          margin="normal"
+          error={!!errors.legal_address}
+          helperText={errors.legal_address?.message}
+          {...register('legal_address', {
+            required: 'Введите юридический адрес',
+          })}
         />
 
         <TextField
