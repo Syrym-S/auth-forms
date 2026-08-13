@@ -14,12 +14,14 @@ import {
   DocumentUploadField
 } from '../../shared/DocumentUploadField';
 import { getSelectedFile } from '../../shared/document-upload-file.helpers'
+import { normalizeBackendParams } from '../../shared/backend-validation-error.helpers';
 import { useState, useEffect } from 'react';
 import { getClaimInfoApi, registerRequest } from '../../api/auth';
 import { useRegister } from '../context/InviteContext';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
 import { isStaging } from '../../api/client';
+import { formatPhoneInput } from '../../shared/phone-format.helpers';
 
 const REGISTRATION_DOCUMENT_NAME = 'Документ о регистрации юридического лица';
 
@@ -33,7 +35,7 @@ export default function Register() {
   const claimCode = new URLSearchParams(search).get('claim');
 
   // const [valuesFromInviteLink, setValuesFromInviteLink] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [fileInputKeys, setFileInputKeys] = useState({
     registration_document: 0,
@@ -46,6 +48,8 @@ export default function Register() {
     watch,
     reset,
     setValue,
+    setError,
+    control,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -77,6 +81,31 @@ export default function Register() {
   const registrationDocumentFile = getSelectedFile(registrationDocument);
   const signerAuthorityDocumentFile = getSelectedFile(signerAuthorityDocument);
 
+  const BACKEND_FIELD_MAP = {
+    company_name: { field: 'company_name', message: 'Проверьте название компании' },
+    bin: { field: 'bin', message: 'БИН указан некорректно' },
+    bik: { field: 'bik', message: 'БИК указан некорректно' },
+    bank_name: { field: 'bank_name', message: 'Проверьте название банка' },
+    iik: { field: 'iik', message: 'Проверьте правильность ИИК' },
+    legal_address: { field: 'legal_address', message: 'Проверьте адрес компании' },
+    fio: { field: 'fio', message: 'Проверьте корректность ФИО' },
+    phone: { field: 'phone', message: 'Проверьте номер телефона' },
+    iin: { field: 'iin', message: 'ИИН указан некорректно' },
+    document_number: { field: 'document_number', message: 'Проверьте номер документа' },
+    issue_country: { field: 'issue_country', message: 'Укажите страну выдачи документа' },
+    email: { field: 'email', message: 'Проверьте правильность email' },
+    password: { field: 'password', message: 'Проверьте пароль' },
+    password_confirm: { field: 'password_confirm', message: 'Проверьте подтверждение пароля' },
+    registration_document: {
+      field: 'registration_document',
+      message: 'Проверьте загруженный документ о регистрации',
+    },
+    employer_document: {
+      field: 'signer_authority_document',
+      message: 'Проверьте загруженный документ о праве подписи',
+    },
+  };
+
   function handleRemoveFile(fieldName) {
     setValue(fieldName, null, {
       shouldDirty: true,
@@ -90,7 +119,7 @@ export default function Register() {
   }
 
   const onSubmit = async (data) => {
-    setError('');
+    setErrorMessage('');
 
     try {
       const registrationDocumentFile = getSelectedFile(
@@ -105,9 +134,8 @@ export default function Register() {
 
       payload.append('company_name', data.company_name);
       payload.append('bin', data.bin);
-      payload.append('company_name', data.company_name);
-      payload.append('bin', data.bin);
       payload.append('legal_address', data.legal_address);
+      payload.append('fio', data.fio);
       payload.append('phone', data.phone);
       payload.append('iin', data.iin);
       payload.append('document_number', data.document_number);
@@ -163,7 +191,59 @@ export default function Register() {
 
       window.location.href = isStaging ? '/staging/customer' : 'customer';
     } catch (e) {
-      setError(e?.response?.data?.error || e?.message || 'Ошибка регистрации');
+      const ulStatus = e?.response?.data?.ul_status;
+
+      if (ulStatus) {
+        setErrorMessage(
+          'Не удалось найти организацию по указанному БИН. Проверьте правильность БИН и повторите попытку.',
+        );
+        return;
+      }
+
+      if (e?.response?.data?.error === 'Company exists') {
+        setError('bin', {
+          type: 'server',
+          message: 'Компания с таким БИН уже зарегистрирована',
+        });
+        setErrorMessage('Проверьте БИН — компания уже зарегистрирована');
+        return;
+      }
+
+      const params = e?.response?.data?.data?.params;
+      const paramEntries = normalizeBackendParams(params);
+
+      const unmatchedMessages = [];
+      let matchedAny = false;
+
+      paramEntries.forEach(({ fieldName, backendMessage }) => {
+        const mapping = BACKEND_FIELD_MAP[fieldName];
+        if (mapping) {
+          matchedAny = true;
+          setError(mapping.field, {
+            type: 'server',
+            message: mapping.message,
+          });
+        } else {
+          unmatchedMessages.push(backendMessage || fieldName);
+        }
+      });
+
+      if (matchedAny && unmatchedMessages.length === 0) {
+        setErrorMessage('Проверьте выделенные поля');
+      } else if (matchedAny) {
+        setErrorMessage(
+          `Проверьте выделенные поля. Также: ${unmatchedMessages.join(', ')}`,
+        );
+      } else if (unmatchedMessages.length > 0) {
+        setErrorMessage(unmatchedMessages.join(', '));
+      } else {
+        setErrorMessage(
+          e?.response?.data?.message ||
+            e?.response?.data?.error ||
+            e?.message ||
+            'Ошибка регистрации',
+        );
+      }
     }
   };
 
@@ -198,7 +278,7 @@ export default function Register() {
         password_confirm: '',
       });
     } catch (e) {
-      setError(
+      setErrorMessage(
         e?.response?.data?.error ||
           e?.response?.data?.message ||
           e?.message ||
@@ -329,19 +409,34 @@ export default function Register() {
           })}
         />
 
-        <TextField
-          fullWidth
-          label="Телефон"
-          margin="normal"
-          error={!!errors.phone}
-          helperText={errors.phone?.message}
-          {...register('phone', {
+        <Controller
+          name="phone"
+          control={control}
+          rules={{
             required: 'Введите телефон',
             pattern: {
               value: /^\+?[0-9]{10,15}$/,
               message: 'Некорректный номер телефона',
             },
-          })}
+          }}
+          render={({ field }) => (
+            <TextField
+              fullWidth
+              label="Телефон"
+              margin="normal"
+              error={!!errors.phone}
+              helperText={errors.phone?.message}
+              inputRef={field.ref}
+              name={field.name}
+              onBlur={field.onBlur}
+              value={formatPhoneInput(field.value).display}
+              onChange={(e) => {
+                field.onChange(
+                  formatPhoneInput(e.target.value, field.value).value,
+                );
+              }}
+            />
+          )}
         />
 
         <TextField

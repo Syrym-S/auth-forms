@@ -12,6 +12,7 @@ import { useState } from "react";
 import { loginRequest } from "../../api/auth";
 import { useForm } from "react-hook-form";
 import { isStaging } from "../../api/client";
+import { getLoginErrorMessage } from "../../shared/login-error.helpers";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -49,7 +50,7 @@ export default function Login() {
          window.location.href = isStaging ? "/staging/customer" : "/customer";
       }
     } catch (e) {
-      setError(e?.response?.data?.error || e?.message || "Ошибка авторизации");
+      setError(getLoginErrorMessage(e));
     }
   };
 
@@ -128,7 +129,7 @@ export default function Login() {
           sx={{ mt: 2 }}
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Загрузка..." : "Зайти"}
+          {isSubmitting ? "Загрузка..." : "Войти"}
         </Button>
       </Box>
 

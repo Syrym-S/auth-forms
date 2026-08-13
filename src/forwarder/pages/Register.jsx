@@ -14,10 +14,12 @@ import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutl
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { registerRequest, getClaimInfoApi } from "../../api/auth";
 import { isStaging } from "../../api/client";
+import { normalizeBackendParams } from "../../shared/backend-validation-error.helpers";
+import { formatPhoneInput } from "../../shared/phone-format.helpers";
 
 function getClaimFromUrl() {
   const searchParams = new URLSearchParams(window.location.search);
@@ -35,6 +37,8 @@ function mapClaimInfoToForm(claimInfo) {
   return {
     bin: claimInfo.company_bin || claimInfo.bin || "",
     companyName: claimInfo.company_name || claimInfo.companyName || "",
+    companyAddress:
+      claimInfo.company_address || claimInfo.companyAddress || "",
 
     managerName:
       person.fio ||
@@ -68,7 +72,7 @@ function mapClaimInfoToForm(claimInfo) {
 }
 
 export default function Register() {
-  const [error, setError] = useState("");
+  const [error, setErrorMessage] = useState("");
   const [isClaimLoading, setIsClaimLoading] = useState(false);
   const claim = getClaimFromUrl();
 
@@ -78,11 +82,14 @@ export default function Register() {
     watch,
     reset,
     setValue,
+    setError,
+    control,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       bin: "",
       companyName: "",
+      companyAddress: "",
       managerName: "",
       phone: "",
       iin: "",
@@ -93,6 +100,46 @@ export default function Register() {
       confirmPassword: "",
     },
   });
+
+  const BACKEND_FIELD_MAP = {
+    bin: { field: "bin", message: "БИН указан некорректно" },
+    company_name: {
+      field: "companyName",
+      message: "Проверьте название компании",
+    },
+    company_address: {
+      field: "companyAddress",
+      message: "Проверьте адрес компании",
+    },
+    fio: {
+      field: "managerName",
+      message: "Проверьте корректность ФИО",
+    },
+    phone: { field: "phone", message: "Проверьте номер телефона" },
+    iin: { field: "iin", message: "ИИН указан некорректно" },
+    document_number: {
+      field: "documentNumber",
+      message: "Проверьте номер документа",
+    },
+    issue_country: {
+      field: "issueCountry",
+      message: "Укажите страну выдачи документа",
+    },
+    email: { field: "email", message: "Проверьте правильность email" },
+    password: { field: "password", message: "Проверьте пароль" },
+    password_confirm: {
+      field: "confirmPassword",
+      message: "Проверьте подтверждение пароля",
+    },
+    registration_document: {
+      field: "legalEntityRegistrationDocument",
+      message: "Проверьте загруженный документ о регистрации",
+    },
+    employer_document: {
+      field: "employeeEmploymentDocument",
+      message: "Проверьте загруженный документ о праве подписи",
+    },
+  };
 
   const password = watch("password");
   const legalEntityRegistrationDocument = watch(
@@ -110,7 +157,7 @@ export default function Register() {
     async function loadClaimInfo() {
       try {
         setIsClaimLoading(true);
-        setError("");
+        setErrorMessage("");
 
         const response = await getClaimInfoApi(claim);
         const claimInfo = getClaimData(response);
@@ -122,7 +169,7 @@ export default function Register() {
         }
       } catch (requestError) {
         if (!isCancelled) {
-          setError(
+          setErrorMessage(
             requestError.response?.data?.message ||
               requestError.response?.data?.error ||
               requestError.message ||
@@ -144,22 +191,43 @@ export default function Register() {
   }, [claim, reset]);
 
   const onSubmit = async (data) => {
-    setError("");
+    setErrorMessage("");
 
     try {
-      const payload = {
-        bin: data.bin,
-        company_name: data.companyName,
-        fio: data.managerName,
-        phone: data.phone,
-        iin: data.iin,
-        document_number: data.documentNumber,
-        issue_country: data.issueCountry,
-        email: data.email,
-        password: data.password,
-        password_confirm: data.confirmPassword,
-        ...(claim ? { invite: claim } : {}),
-      };
+      const payload = new FormData();
+
+      payload.append("bin", data.bin);
+      payload.append("company_name", data.companyName);
+      payload.append("company_address", data.companyAddress);
+      payload.append("fio", data.managerName);
+      payload.append("phone", data.phone);
+      payload.append("iin", data.iin);
+      payload.append("document_number", data.documentNumber);
+      payload.append("issue_country", data.issueCountry);
+      payload.append("email", data.email);
+      payload.append("password", data.password);
+      payload.append("password_confirm", data.confirmPassword);
+
+      if (claim) {
+        payload.append("invite", claim);
+      }
+
+      payload.append(
+        "registration_document",
+        data.legalEntityRegistrationDocument[0],
+      );
+
+      payload.append(
+        "registration_document_name",
+        "Документ о регистрации юридического лица",
+      );
+
+      payload.append("employer_document", data.employeeEmploymentDocument[0]);
+
+      payload.append(
+        "employer_document_name",
+        "Документ о трудоустройстве сотрудника",
+      );
 
       const res = await registerRequest(payload);
 
@@ -172,7 +240,72 @@ export default function Register() {
 
       window.location.href = isStaging ? "/staging/auth/login" : "/auth/login";
     } catch (e) {
-      setError(e?.message || "Ошибка регистрации");
+      const ulStatus = e?.response?.data?.ul_status;
+
+      if (ulStatus) {
+        setErrorMessage(
+          'Не удалось найти организацию по указанному БИН. Проверьте правильность БИН и повторите попытку.',
+        );
+        return;
+      }
+
+      if (e?.response?.data?.error === "Company exists") {
+        setError("bin", {
+          type: "server",
+          message: "Компания с таким БИН уже зарегистрирована",
+        });
+        setErrorMessage("Проверьте БИН — компания уже зарегистрирована");
+        return;
+      }
+
+      if (
+        e?.response?.data?.error ===
+        "Registration document (file + name) is required"
+      ) {
+        setError(BACKEND_FIELD_MAP.registration_document.field, {
+          type: "server",
+          message: "Загрузите документ",
+        });
+        setError(BACKEND_FIELD_MAP.employer_document.field, {
+          type: "server",
+          message: "Загрузите документ",
+        });
+        setErrorMessage("Необходимо загрузить документ о регистрации");
+        return;
+      }
+
+      const params = e?.response?.data?.data?.params;
+      const paramEntries = normalizeBackendParams(params);
+
+      const unmatchedMessages = [];
+      let matchedAny = false;
+
+      paramEntries.forEach(({ fieldName, backendMessage }) => {
+        const mapping = BACKEND_FIELD_MAP[fieldName];
+        if (mapping) {
+          matchedAny = true;
+          setError(mapping.field, {
+            type: "server",
+            message: mapping.message,
+          });
+        } else {
+          unmatchedMessages.push(backendMessage || fieldName);
+        }
+      });
+
+      if (matchedAny && unmatchedMessages.length === 0) {
+        setErrorMessage("Проверьте выделенные поля");
+      } else if (matchedAny) {
+        setErrorMessage(
+          `Проверьте выделенные поля. Также: ${unmatchedMessages.join(", ")}`,
+        );
+      } else if (unmatchedMessages.length > 0) {
+        setErrorMessage(unmatchedMessages.join(", "));
+      } else {
+        setErrorMessage(
+          e.response?.data?.message || e?.message || "Ошибка регистрации",
+        );
+      }
     }
   };
 
@@ -239,6 +372,17 @@ export default function Register() {
 
           <TextField
             fullWidth
+            label="Адрес компании"
+            margin="normal"
+            error={!!errors.companyAddress}
+            helperText={errors.companyAddress?.message}
+            {...register("companyAddress", {
+              required: "Введите адрес компании",
+            })}
+          />
+
+          <TextField
+            fullWidth
             label="ФИО главного экспедитора"
             margin="normal"
             error={!!errors.managerName}
@@ -248,19 +392,34 @@ export default function Register() {
             })}
           />
 
-          <TextField
-            fullWidth
-            label="Телефон"
-            margin="normal"
-            error={!!errors.phone}
-            helperText={errors.phone?.message}
-            {...register("phone", {
+          <Controller
+            name="phone"
+            control={control}
+            rules={{
               required: "Введите телефон",
               pattern: {
                 value: /^\+?[0-9]{10,15}$/,
                 message: "Некорректный номер телефона",
               },
-            })}
+            }}
+            render={({ field }) => (
+              <TextField
+                fullWidth
+                label="Телефон"
+                margin="normal"
+                error={!!errors.phone}
+                helperText={errors.phone?.message}
+                inputRef={field.ref}
+                name={field.name}
+                onBlur={field.onBlur}
+                value={formatPhoneInput(field.value).display}
+                onChange={(e) => {
+                  field.onChange(
+                    formatPhoneInput(e.target.value, field.value).value,
+                  );
+                }}
+              />
+            )}
           />
 
           <TextField

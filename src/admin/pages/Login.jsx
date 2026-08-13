@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { loginRequest } from "../../api/auth";
 import { isStaging } from "../../api/client";
+import { getLoginErrorMessage } from "../../shared/login-error.helpers";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -45,7 +46,7 @@ export default function Login() {
          window.location.href = isStaging ? "/staging/admin" : "/admin";
       }
     } catch (e) {
-      setError(e?.message || "Ошибка входа");
+      setError(getLoginErrorMessage(e));
     }
   };
 
@@ -103,7 +104,7 @@ export default function Login() {
         />
 
         <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
-          Зайти
+          Войти
         </Button>
       </form>
 

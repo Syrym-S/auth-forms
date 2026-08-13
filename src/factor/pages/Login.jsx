@@ -13,6 +13,7 @@ import { useState } from 'react';
 import AuthLayout from '../components/AuthLayout';
 import { loginRequest } from '../../api/auth';
 import { isStaging } from '../../api/client';
+import { getLoginErrorMessage } from '../../shared/login-error.helpers';
 
 export default function Login() {
   const [error, setError] = useState('');
@@ -47,9 +48,7 @@ export default function Login() {
         window.location.href = isStaging ? '/staging/factor' : '/factor';
       }
     } catch (error) {
-      setError(
-        error.response?.data?.message || error.message || 'Ошибка входа',
-      );
+      setError(getLoginErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }

@@ -9,6 +9,7 @@ import {
   DocumentUploadField
 } from '../../shared/DocumentUploadField';
 import { getSelectedFile } from '../../shared/document-upload-file.helpers'
+import { normalizeBackendParams } from '../../shared/backend-validation-error.helpers';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -28,7 +29,7 @@ export default function RegisterDocuments() {
   const navigate = useNavigate();
   const { form } = useRegister();
 
-  const [error, setError] = useState('');
+  const [error, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const [fileInputKeys, setFileInputKeys] = useState({
@@ -41,6 +42,7 @@ export default function RegisterDocuments() {
     handleSubmit,
     watch,
     setValue,
+    setError,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -48,6 +50,17 @@ export default function RegisterDocuments() {
       signerAuthorityDocument: null,
     },
   });
+
+  const BACKEND_FIELD_MAP = {
+    registration_document: {
+      field: 'legalRegistrationDocument',
+      message: 'Проверьте загруженный документ о регистрации',
+    },
+    employer_document: {
+      field: 'signerAuthorityDocument',
+      message: 'Проверьте загруженный документ о праве подписи',
+    },
+  };
 
   const legalRegistrationDocument = watch('legalRegistrationDocument');
   const signerAuthorityDocument = watch('signerAuthorityDocument');
@@ -71,7 +84,7 @@ export default function RegisterDocuments() {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    setError('');
+    setErrorMessage('');
 
     try {
       const registrationDocumentFile = getSelectedFile(
@@ -156,7 +169,38 @@ export default function RegisterDocuments() {
 
       window.location.href = '/driver';
     } catch (e) {
-      setError(e?.response?.data?.error || e.message || 'Ошибка регистрации');
+      const params = e?.response?.data?.data?.params;
+      const paramEntries = normalizeBackendParams(params);
+
+      const unmatchedMessages = [];
+      let matchedAny = false;
+
+      paramEntries.forEach(({ fieldName, backendMessage }) => {
+        const mapping = BACKEND_FIELD_MAP[fieldName];
+        if (mapping) {
+          matchedAny = true;
+          setError(mapping.field, {
+            type: 'server',
+            message: mapping.message,
+          });
+        } else {
+          unmatchedMessages.push(backendMessage || fieldName);
+        }
+      });
+
+      if (matchedAny && unmatchedMessages.length === 0) {
+        setErrorMessage('Проверьте выделенные поля');
+      } else if (matchedAny) {
+        setErrorMessage(
+          `Проверьте выделенные поля. Также: ${unmatchedMessages.join(', ')}`,
+        );
+      } else if (unmatchedMessages.length > 0) {
+        setErrorMessage(unmatchedMessages.join(', '));
+      } else {
+        setErrorMessage(
+          e?.response?.data?.error || e.message || 'Ошибка регистрации',
+        );
+      }
     } finally {
       setLoading(false);
     }

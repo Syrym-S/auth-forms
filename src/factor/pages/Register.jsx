@@ -11,15 +11,17 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useState } from "react";
 import { registerRequest } from "../../api/auth";
+import { normalizeBackendParams } from "../../shared/backend-validation-error.helpers";
+import { formatPhoneInput } from "../../shared/phone-format.helpers";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 export default function Register() {
-  const [error, setError] = useState("");
+  const [error, setErrorMessage] = useState("");
 
   const {
     register,
@@ -27,7 +29,47 @@ export default function Register() {
     formState: { errors },
     watch,
     setValue,
+    setError,
+    control,
   } = useForm();
+
+  const BACKEND_FIELD_MAP = {
+    email: { field: "email", message: "Проверьте правильность email" },
+    iin: { field: "iin", message: "ИИН указан некорректно" },
+    password: { field: "password", message: "Проверьте пароль" },
+    company_name: {
+      field: "companyName",
+      message: "Проверьте название компании",
+    },
+    company_bin: { field: "companyBin", message: "БИН указан некорректно" },
+    company_bik: { field: "companyBik", message: "БИК указан некорректно" },
+    company_account: {
+      field: "companyAccount",
+      message: "Проверьте расчетный счет",
+    },
+    company_address: {
+      field: "companyAddress",
+      message: "Проверьте адрес компании",
+    },
+    fio: { field: "fio", message: "Проверьте корректность ФИО" },
+    phone: { field: "phone", message: "Проверьте номер телефона" },
+    document_number: {
+      field: "documentNumber",
+      message: "Проверьте номер документа",
+    },
+    issue_country: {
+      field: "issueCountry",
+      message: "Укажите страну выдачи документа",
+    },
+    registration_document: {
+      field: "legalEntityRegistrationDocument",
+      message: "Проверьте загруженный документ о регистрации",
+    },
+    employer_document: {
+      field: "employeeEmploymentDocument",
+      message: "Проверьте загруженный документ о праве подписи",
+    },
+  };
 
   const legalEntityRegistrationDocument = watch(
     "legalEntityRegistrationDocument",
@@ -36,7 +78,7 @@ export default function Register() {
 
   console.log("туц deplow");
   const onSubmit = async (data) => {
-    setError("");
+    setErrorMessage("");
 
     console.log(data);
 
@@ -75,7 +117,56 @@ export default function Register() {
 
       await registerRequest(formData);
     } catch (e) {
-      setError(e?.message || "Ошибка регистрации");
+      const ulStatus = e?.response?.data?.ul_status;
+
+      if (ulStatus) {
+        setErrorMessage(
+          'Не удалось найти организацию по указанному БИН. Проверьте правильность БИН и повторите попытку.',
+        );
+        return;
+      }
+
+      if (e?.response?.data?.error === "Company exists") {
+        setError("companyBin", {
+          type: "server",
+          message: "Компания с таким БИН уже зарегистрирована",
+        });
+        setErrorMessage("Проверьте БИН — компания уже зарегистрирована");
+        return;
+      }
+
+      const params = e.response?.data?.data?.params;
+      const paramEntries = normalizeBackendParams(params);
+
+      const unmatchedMessages = [];
+      let matchedAny = false;
+
+      paramEntries.forEach(({ fieldName, backendMessage }) => {
+        const mapping = BACKEND_FIELD_MAP[fieldName];
+        if (mapping) {
+          matchedAny = true;
+          setError(mapping.field, {
+            type: "server",
+            message: mapping.message,
+          });
+        } else {
+          unmatchedMessages.push(backendMessage || fieldName);
+        }
+      });
+
+      if (matchedAny && unmatchedMessages.length === 0) {
+        setErrorMessage("Проверьте выделенные поля");
+      } else if (matchedAny) {
+        setErrorMessage(
+          `Проверьте выделенные поля. Также: ${unmatchedMessages.join(", ")}`,
+        );
+      } else if (unmatchedMessages.length > 0) {
+        setErrorMessage(unmatchedMessages.join(", "));
+      } else {
+        setErrorMessage(
+          e.response?.data?.message || e?.message || "Ошибка регистрации",
+        );
+      }
     }
   };
 
@@ -213,19 +304,34 @@ export default function Register() {
           })}
         />
 
-        <TextField
-          fullWidth
-          label="Телефон"
-          margin="normal"
-          error={!!errors.phone}
-          helperText={errors.phone?.message}
-          {...register("phone", {
+        <Controller
+          name="phone"
+          control={control}
+          rules={{
             required: "Введите телефон",
             pattern: {
               value: /^\+?[0-9]{10,15}$/,
               message: "Некорректный номер телефона",
             },
-          })}
+          }}
+          render={({ field }) => (
+            <TextField
+              fullWidth
+              label="Телефон"
+              margin="normal"
+              error={!!errors.phone}
+              helperText={errors.phone?.message}
+              inputRef={field.ref}
+              name={field.name}
+              onBlur={field.onBlur}
+              value={formatPhoneInput(field.value).display}
+              onChange={(e) => {
+                field.onChange(
+                  formatPhoneInput(e.target.value, field.value).value,
+                );
+              }}
+            />
+          )}
         />
 
         <TextField
