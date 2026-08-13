@@ -242,9 +242,19 @@ export default function Register() {
       const ulStatus = e?.response?.data?.ul_status;
 
       if (ulStatus) {
-        setErrorMessage(
-          'Не удалось найти организацию по указанному БИН. Проверьте правильность БИН и повторите попытку.',
-        );
+        if (ulStatus === "pending") {
+          setErrorMessage(
+            'Не удалось найти организацию по указанному БИН. Проверьте правильность БИН и повторите попытку.',
+          );
+        } else if (ulStatus === "unknown") {
+          setErrorMessage(
+            "Сервис проверки документов временно недоступен. Попробуйте позже.",
+          );
+        } else {
+          setErrorMessage(
+            "Не удалось проверить организацию. Попробуйте позже.",
+          );
+        }
         return;
       }
 
@@ -254,6 +264,11 @@ export default function Register() {
           message: "Компания с таким БИН уже зарегистрирована",
         });
         setErrorMessage("Проверьте БИН — компания уже зарегистрирована");
+        return;
+      }
+
+      if (e?.response?.data?.error === "User exists") {
+        setErrorMessage("Пользователь с таким email уже зарегистрирован");
         return;
       }
 
