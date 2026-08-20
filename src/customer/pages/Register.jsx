@@ -22,6 +22,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
 import { isStaging } from '../../api/client';
 import { formatPhoneInput } from '../../shared/phone-format.helpers';
+import { passwordPatternRule } from '../../shared/password-validation.helpers';
 
 const REGISTRATION_DOCUMENT_NAME = 'Документ о регистрации юридического лица';
 
@@ -571,6 +572,7 @@ export default function Register() {
               value: 6,
               message: 'Минимум 6 символов',
             },
+            pattern: passwordPatternRule,
           })}
         />
 

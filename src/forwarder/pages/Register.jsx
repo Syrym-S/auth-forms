@@ -20,6 +20,7 @@ import { registerRequest, getClaimInfoApi } from "../../api/auth";
 import { isStaging } from "../../api/client";
 import { normalizeBackendParams } from "../../shared/backend-validation-error.helpers";
 import { formatPhoneInput } from "../../shared/phone-format.helpers";
+import { passwordPatternRule } from "../../shared/password-validation.helpers";
 
 function getClaimFromUrl() {
   const searchParams = new URLSearchParams(window.location.search);
@@ -505,6 +506,7 @@ export default function Register() {
                 value: 6,
                 message: "Минимум 6 символов",
               },
+              pattern: passwordPatternRule,
             })}
           />
 
