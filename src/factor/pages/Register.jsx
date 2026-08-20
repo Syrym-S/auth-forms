@@ -17,6 +17,7 @@ import { registerRequest } from "../../api/auth";
 import { normalizeBackendParams } from "../../shared/backend-validation-error.helpers";
 import { formatPhoneInput } from "../../shared/phone-format.helpers";
 import { passwordPatternRule } from "../../shared/password-validation.helpers";
+import { PasswordField } from "../../shared/PasswordField";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
@@ -250,10 +251,9 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <PasswordField
           fullWidth
           label="Password"
-          type="password"
           margin="normal"
           error={!!errors.password}
           helperText={errors.password?.message}

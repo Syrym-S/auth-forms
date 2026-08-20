@@ -21,6 +21,7 @@ import { isStaging } from "../../api/client";
 import { normalizeBackendParams } from "../../shared/backend-validation-error.helpers";
 import { formatPhoneInput } from "../../shared/phone-format.helpers";
 import { passwordPatternRule } from "../../shared/password-validation.helpers";
+import { PasswordField } from "../../shared/PasswordField";
 
 function getClaimFromUrl() {
   const searchParams = new URLSearchParams(window.location.search);
@@ -40,6 +41,9 @@ function mapClaimInfoToForm(claimInfo) {
     companyName: claimInfo.company_name || claimInfo.companyName || "",
     companyAddress:
       claimInfo.company_address || claimInfo.companyAddress || "",
+    companyAccount:
+      claimInfo.company_account || claimInfo.companyAccount || "",
+    companyBik: claimInfo.company_bik || claimInfo.companyBik || "",
 
     managerName:
       person.fio ||
@@ -91,6 +95,8 @@ export default function Register() {
       bin: "",
       companyName: "",
       companyAddress: "",
+      companyAccount: "",
+      companyBik: "",
       managerName: "",
       phone: "",
       iin: "",
@@ -113,6 +119,14 @@ export default function Register() {
     company_address: {
       field: "companyAddress",
       message: "Проверьте адрес компании",
+    },
+    company_account: {
+      field: "companyAccount",
+      message: "Проверьте расчётный счёт",
+    },
+    company_bik: {
+      field: "companyBik",
+      message: "Проверьте БИК",
     },
     fio: {
       field: "managerName",
@@ -202,6 +216,8 @@ export default function Register() {
       payload.append("bin", data.bin);
       payload.append("company_name", data.companyName);
       payload.append("company_address", data.companyAddress);
+      payload.append("company_account", data.companyAccount);
+      payload.append("company_bik", data.companyBik);
       payload.append("fio", data.managerName);
       payload.append("phone", data.phone);
       payload.append("iin", data.iin);
@@ -398,6 +414,24 @@ export default function Register() {
 
           <TextField
             fullWidth
+            label="Расчётный счёт"
+            margin="normal"
+            error={!!errors.companyAccount}
+            helperText={errors.companyAccount?.message}
+            {...register("companyAccount")}
+          />
+
+          <TextField
+            fullWidth
+            label="БИК"
+            margin="normal"
+            error={!!errors.companyBik}
+            helperText={errors.companyBik?.message}
+            {...register("companyBik")}
+          />
+
+          <TextField
+            fullWidth
             label="ФИО главного экспедитора"
             margin="normal"
             error={!!errors.managerName}
@@ -493,10 +527,9 @@ export default function Register() {
             })}
           />
 
-          <TextField
+          <PasswordField
             fullWidth
             label="Password"
-            type="password"
             margin="normal"
             error={!!errors.password}
             helperText={errors.password?.message}
@@ -510,10 +543,9 @@ export default function Register() {
             })}
           />
 
-          <TextField
+          <PasswordField
             fullWidth
             label="Re-enter password"
-            type="password"
             margin="normal"
             error={!!errors.confirmPassword}
             helperText={errors.confirmPassword?.message}

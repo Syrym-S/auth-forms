@@ -14,6 +14,7 @@ import { useRegister } from "../context/RegisterContext";
 import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { getClaimInfoApi } from "../../api/auth";
+import { PasswordField } from "../../shared/PasswordField";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -139,10 +140,9 @@ export default function Register() {
           }}
         />
 
-        <TextField
+        <PasswordField
           fullWidth
           label="Password"
-          type="password"
           margin="normal"
           error={!!errors.password}
           helperText={errors.password?.message}
@@ -155,10 +155,9 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <PasswordField
           fullWidth
           label="Re-enter password"
-          type="password"
           margin="normal"
           error={!!errors.confirmPassword}
           helperText={errors.confirmPassword?.message}

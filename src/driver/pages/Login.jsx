@@ -14,6 +14,7 @@ import { useForm } from 'react-hook-form';
 import { isStaging } from '../../api/client';
 import { saveAuthData } from '../services/authStorage';
 import { getLoginErrorMessage } from '../../shared/login-error.helpers';
+import { PasswordField } from '../../shared/PasswordField';
 
 export default function Login() {
   const [error, setError] = useState('');
@@ -96,10 +97,9 @@ export default function Login() {
           })}
         />
 
-        <TextField
+        <PasswordField
           fullWidth
           label="Password"
-          type="password"
           margin="normal"
           error={!!errors.password}
           helperText={errors.password?.message}

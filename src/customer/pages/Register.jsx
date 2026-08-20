@@ -23,6 +23,7 @@ import { useLocation } from 'react-router-dom';
 import { isStaging } from '../../api/client';
 import { formatPhoneInput } from '../../shared/phone-format.helpers';
 import { passwordPatternRule } from '../../shared/password-validation.helpers';
+import { PasswordField } from '../../shared/PasswordField';
 
 const REGISTRATION_DOCUMENT_NAME = 'Документ о регистрации юридического лица';
 
@@ -559,10 +560,9 @@ export default function Register() {
           onRemove={() => handleRemoveFile('signer_authority_document')}
         />
 
-        <TextField
+        <PasswordField
           fullWidth
           label="Пароль"
-          type="password"
           margin="normal"
           error={!!errors.password}
           helperText={errors.password?.message}
@@ -576,10 +576,9 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <PasswordField
           fullWidth
           label="Повторите пароль"
-          type="password"
           margin="normal"
           error={!!errors.password_confirm}
           helperText={errors.password_confirm?.message}

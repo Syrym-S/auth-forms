@@ -10,6 +10,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { resetPasswordRequest } from '../api/auth';
+import { PasswordField } from './PasswordField';
 
 export function ResetPasswordForm({ loginPath = '/login' }) {
   const [searchParams] = useSearchParams();
@@ -113,10 +114,9 @@ export function ResetPasswordForm({ loginPath = '/login' }) {
 
       {!successMessage && (
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-          <TextField
+          <PasswordField
             fullWidth
             label="Новый пароль"
-            type="password"
             margin="normal"
             error={!!errors.password}
             helperText={errors.password?.message}
@@ -130,10 +130,9 @@ export function ResetPasswordForm({ loginPath = '/login' }) {
             })}
           />
 
-          <TextField
+          <PasswordField
             fullWidth
             label="Повторите пароль"
-            type="password"
             margin="normal"
             error={!!errors.password_confirm}
             helperText={errors.password_confirm?.message}
