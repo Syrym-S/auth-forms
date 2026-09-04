@@ -78,7 +78,6 @@ export default function Register() {
   );
   const employeeEmploymentDocument = watch("employeeEmploymentDocument");
 
-  console.log("туц deplow");
   const onSubmit = async (data) => {
     setErrorMessage("");
 
@@ -88,7 +87,6 @@ export default function Register() {
       const formData = new FormData();
 
       formData.append("email", data.email);
-      formData.append("password", data.password);
       formData.append("company_name", data.companyName);
       formData.append("company_bin", data.companyBin);
       formData.append("company_bik", data.companyBik);
@@ -99,6 +97,8 @@ export default function Register() {
       formData.append("phone", data.phone);
       formData.append("document_number", data.documentNumber);
       formData.append("issue_country", data.issueCountry);
+      formData.append("password", data.password);
+      formData.append("password_confirm", data.password_confirm);
 
       formData.append(
         "registration_document",
@@ -124,7 +124,7 @@ export default function Register() {
       if (ulStatus) {
         if (ulStatus === "pending") {
           setErrorMessage(
-            'Не удалось найти организацию по указанному БИН. Проверьте правильность БИН и повторите попытку.',
+            "Не удалось найти организацию по указанному БИН. Проверьте правильность БИН и повторите попытку.",
           );
         } else if (ulStatus === "unknown") {
           setErrorMessage(
@@ -251,22 +251,6 @@ export default function Register() {
           })}
         />
 
-        <PasswordField
-          fullWidth
-          label="Password"
-          margin="normal"
-          error={!!errors.password}
-          helperText={errors.password?.message}
-          {...register("password", {
-            required: "Введите пароль",
-            minLength: {
-              value: 6,
-              message: "Минимум 6 символов",
-            },
-            pattern: passwordPatternRule,
-          })}
-        />
-
         <TextField
           fullWidth
           label="Название компании"
@@ -375,6 +359,46 @@ export default function Register() {
           helperText={errors.documentNumber?.message}
           {...register("documentNumber", {
             required: "Введите номер документа",
+          })}
+        />
+
+        <TextField
+          fullWidth
+          label="Страна выдачи"
+          margin="normal"
+          error={!!errors.issueCountry}
+          helperText={errors.issueCountry?.message}
+          {...register("issueCountry", {
+            required: "Введите страну выдачи",
+          })}
+        />
+
+        <PasswordField
+          fullWidth
+          label="Password"
+          margin="normal"
+          error={!!errors.password}
+          helperText={errors.password?.message}
+          {...register("password", {
+            required: "Введите пароль",
+            minLength: {
+              value: 6,
+              message: "Минимум 6 символов",
+            },
+            pattern: passwordPatternRule,
+          })}
+        />
+
+        <PasswordField
+          fullWidth
+          label="Confirm Password"
+          margin="normal"
+          error={!!errors.password_confirm}
+          helperText={errors.password_confirm?.message}
+          {...register("password_confirm", {
+            required: "Подтвердите пароль",
+            validate: (value) =>
+              value === watch("password") || "Пароли не совпадают",
           })}
         />
 
@@ -637,17 +661,6 @@ export default function Register() {
             </FormHelperText>
           )}
         </Box>
-
-        <TextField
-          fullWidth
-          label="Страна выдачи"
-          margin="normal"
-          error={!!errors.issueCountry}
-          helperText={errors.issueCountry?.message}
-          {...register("issueCountry", {
-            required: "Введите страну выдачи",
-          })}
-        />
 
         <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
           Регистрация
