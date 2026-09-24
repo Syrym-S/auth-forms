@@ -7,6 +7,7 @@ import {
   Alert,
   CircularProgress,
   IconButton,
+  MenuItem,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AuthLayout from '../components/AuthLayout';
@@ -24,11 +25,20 @@ import { isStaging } from '../../api/client';
 import { formatPhoneInput } from '../../shared/phone-format.helpers';
 import { passwordPatternRule } from '../../shared/password-validation.helpers';
 import { PasswordField } from '../../shared/PasswordField';
+import {
+  DOCUMENT_ISSUED_BY_OPTIONS,
+  getTodayDateInputValue,
+  validateNotAfterToday,
+} from '../../shared/identity-document.helpers';
 
 const REGISTRATION_DOCUMENT_NAME = 'Документ о регистрации юридического лица';
 
 const EMPLOYER_DOCUMENT_NAME =
   'Документ о трудоустройстве сотрудника с правом подписи или приказ о назначении первого руководителя';
+
+// Fail-open: only an explicit `false` hides the documents block.
+const isRegistrationDocumentsEnabled =
+  window?.APP_DATA?.features?.registration_documents !== false;
 
 export default function Register() {
   const { invite } = useRegister();
@@ -66,6 +76,8 @@ export default function Register() {
       iin: '',
       document_number: '',
       issue_country: '',
+      document_issue_date: '',
+      document_issued_by: '',
       registration_document: null,
       signer_authority_document: null,
       email: '',
@@ -95,6 +107,8 @@ export default function Register() {
     iin: { field: 'iin', message: 'ИИН указан некорректно' },
     document_number: { field: 'document_number', message: 'Проверьте номер документа' },
     issue_country: { field: 'issue_country', message: 'Укажите страну выдачи документа' },
+    document_issue_date: { field: 'document_issue_date', message: 'Проверьте дату выдачи документа' },
+    document_issued_by: { field: 'document_issued_by', message: 'Укажите, кем выдан документ' },
     email: { field: 'email', message: 'Проверьте правильность email' },
     password: { field: 'password', message: 'Проверьте пароль' },
     password_confirm: { field: 'password_confirm', message: 'Проверьте подтверждение пароля' },
@@ -142,6 +156,8 @@ export default function Register() {
       payload.append('iin', data.iin);
       payload.append('document_number', data.document_number);
       payload.append('issue_country', data.issue_country);
+      payload.append('document_issue_date', data.document_issue_date);
+      payload.append('document_issued_by', data.document_issued_by);
       payload.append('email', data.email);
       payload.append('password', data.password);
       payload.append('password_confirm', data.password_confirm);
@@ -304,6 +320,8 @@ export default function Register() {
         iin: data?.person?.iin ?? '',
         document_number: '',
         issue_country: data.issue_country ?? '',
+        document_issue_date: '',
+        document_issued_by: '',
         registration_document: null,
         signer_authority_document: null,
         email: data?.person?.email ?? '',
@@ -519,6 +537,54 @@ export default function Register() {
 
         <TextField
           fullWidth
+          type="date"
+          label="Когда выдан документ"
+          margin="normal"
+          error={!!errors.document_issue_date}
+          helperText={errors.document_issue_date?.message}
+          {...register('document_issue_date', {
+            required: 'Укажите дату выдачи документа',
+            validate: validateNotAfterToday,
+          })}
+          slotProps={{
+            inputLabel: {
+              shrink: true,
+            },
+            htmlInput: {
+              max: getTodayDateInputValue(),
+            },
+          }}
+        />
+
+        <Controller
+          name="document_issued_by"
+          control={control}
+          rules={{ required: 'Укажите, кем выдан документ' }}
+          render={({ field }) => (
+            <TextField
+              select
+              fullWidth
+              label="Кем выдан документ"
+              margin="normal"
+              error={!!errors.document_issued_by}
+              helperText={errors.document_issued_by?.message}
+              inputRef={field.ref}
+              name={field.name}
+              value={field.value}
+              onBlur={field.onBlur}
+              onChange={field.onChange}
+            >
+              {DOCUMENT_ISSUED_BY_OPTIONS.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
+
+        <TextField
+          fullWidth
           label="Email"
           margin="normal"
           error={!!errors.email}
@@ -537,28 +603,32 @@ export default function Register() {
           }}
         />
 
-        <DocumentUploadField
-          label={REGISTRATION_DOCUMENT_NAME}
-          file={registrationDocumentFile}
-          inputKey={fileInputKeys.registration_document}
-          error={errors.registration_document?.message}
-          inputProps={register('registration_document', {
-            required: 'Загрузите документ о регистрации юридического лица',
-          })}
-          onRemove={() => handleRemoveFile('registration_document')}
-        />
+        {isRegistrationDocumentsEnabled && (
+          <>
+            <DocumentUploadField
+              label={REGISTRATION_DOCUMENT_NAME}
+              file={registrationDocumentFile}
+              inputKey={fileInputKeys.registration_document}
+              error={errors.registration_document?.message}
+              inputProps={register('registration_document', {
+                required: 'Загрузите документ о регистрации юридического лица',
+              })}
+              onRemove={() => handleRemoveFile('registration_document')}
+            />
 
-        <DocumentUploadField
-          label={EMPLOYER_DOCUMENT_NAME}
-          file={signerAuthorityDocumentFile}
-          inputKey={fileInputKeys.signer_authority_document}
-          error={errors.signer_authority_document?.message}
-          inputProps={register('signer_authority_document', {
-            required:
-              'Загрузите документ о праве подписи или приказ о назначении',
-          })}
-          onRemove={() => handleRemoveFile('signer_authority_document')}
-        />
+            <DocumentUploadField
+              label={EMPLOYER_DOCUMENT_NAME}
+              file={signerAuthorityDocumentFile}
+              inputKey={fileInputKeys.signer_authority_document}
+              error={errors.signer_authority_document?.message}
+              inputProps={register('signer_authority_document', {
+                required:
+                  'Загрузите документ о праве подписи или приказ о назначении',
+              })}
+              onRemove={() => handleRemoveFile('signer_authority_document')}
+            />
+          </>
+        )}
 
         <PasswordField
           fullWidth
