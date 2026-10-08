@@ -373,23 +373,8 @@ export default function Register() {
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
         <TextField
           fullWidth
-          label="Название компании"
-          margin="normal"
-          error={!!errors.company_name}
-          helperText={errors.company_name?.message}
-          {...register('company_name', {
-            required: 'Введите название компании',
-          })}
-          slotProps={{
-            inputLabel: {
-              shrink: !!company_name,
-            },
-          }}
-        />
-
-        <TextField
-          fullWidth
-          label="БИН компании"
+          label="БИН"
+          placeholder="210540012345"
           margin="normal"
           error={!!errors.bin}
           helperText={errors.bin?.message}
@@ -406,41 +391,32 @@ export default function Register() {
           })}
           slotProps={{
             inputLabel: {
-              shrink: !!bin,
+              shrink: bin ? true : undefined,
             },
           }}
         />
 
         <TextField
           fullWidth
-          label="БИК компании"
+          label="Название компании"
+          placeholder="ТОО «Алтын Жол Логистик»"
           margin="normal"
-          error={!!errors.bik}
-          helperText={errors.bik?.message}
-          {...register('bik')}
-        />
-
-        <TextField
-          fullWidth
-          label="Банк компании"
-          margin="normal"
-          error={!!errors.bank_name}
-          helperText={errors.bank_name?.message}
-          {...register('bank_name')}
-        />
-
-        <TextField
-          fullWidth
-          label="ИИК"
-          margin="normal"
-          error={!!errors.iik}
-          helperText={errors.iik?.message}
-          {...register('iik')}
+          error={!!errors.company_name}
+          helperText={errors.company_name?.message}
+          {...register('company_name', {
+            required: 'Введите название компании',
+          })}
+          slotProps={{
+            inputLabel: {
+              shrink: company_name ? true : undefined,
+            },
+          }}
         />
 
         <TextField
           fullWidth
           label="Юридический адрес"
+          placeholder="г. Алматы, ул. Абая, д. 10, оф. 5"
           margin="normal"
           error={!!errors.legal_address}
           helperText={errors.legal_address?.message}
@@ -451,7 +427,38 @@ export default function Register() {
 
         <TextField
           fullWidth
+          label="Банк"
+          placeholder="АО «Пример Банк»"
+          margin="normal"
+          error={!!errors.bank_name}
+          helperText={errors.bank_name?.message}
+          {...register('bank_name')}
+        />
+
+        <TextField
+          fullWidth
+          label="БИК"
+          placeholder="BANKKZKX"
+          margin="normal"
+          error={!!errors.bik}
+          helperText={errors.bik?.message}
+          {...register('bik')}
+        />
+
+        <TextField
+          fullWidth
+          label="ИИК (расчётный счёт)"
+          placeholder="KZ123456789012345678"
+          margin="normal"
+          error={!!errors.iik}
+          helperText={errors.iik?.message}
+          {...register('iik')}
+        />
+
+        <TextField
+          fullWidth
           label="ФИО"
+          placeholder="Нурланов Ерлан Серикович"
           margin="normal"
           error={!!errors.fio}
           helperText={errors.fio?.message}
@@ -460,39 +467,10 @@ export default function Register() {
           })}
         />
 
-        <Controller
-          name="phone"
-          control={control}
-          rules={{
-            required: 'Введите телефон',
-            pattern: {
-              value: /^\+?[0-9]{10,15}$/,
-              message: 'Некорректный номер телефона',
-            },
-          }}
-          render={({ field }) => (
-            <TextField
-              fullWidth
-              label="Телефон"
-              margin="normal"
-              error={!!errors.phone}
-              helperText={errors.phone?.message}
-              inputRef={field.ref}
-              name={field.name}
-              onBlur={field.onBlur}
-              value={formatPhoneInput(field.value).display}
-              onChange={(e) => {
-                field.onChange(
-                  formatPhoneInput(e.target.value, field.value).value,
-                );
-              }}
-            />
-          )}
-        />
-
         <TextField
           fullWidth
           label="ИИН"
+          placeholder="900115300123"
           margin="normal"
           error={!!errors.iin}
           helperText={errors.iin?.message}
@@ -516,6 +494,7 @@ export default function Register() {
         <TextField
           fullWidth
           label="Номер документа"
+          placeholder="012345678"
           margin="normal"
           error={!!errors.document_number}
           helperText={errors.document_number?.message}
@@ -527,6 +506,7 @@ export default function Register() {
         <TextField
           fullWidth
           label="Страна документа"
+          placeholder="KZ"
           margin="normal"
           error={!!errors.issue_country}
           helperText={errors.issue_country?.message}
@@ -583,26 +563,6 @@ export default function Register() {
           )}
         />
 
-        <TextField
-          fullWidth
-          label="Email"
-          margin="normal"
-          error={!!errors.email}
-          helperText={errors.email?.message}
-          {...register('email', {
-            required: 'Введите email',
-            pattern: {
-              value: /^\S+@\S+\.\S+$/,
-              message: 'Некорректный email',
-            },
-          })}
-          slotProps={{
-            inputLabel: {
-              shrink: !!email,
-            },
-          }}
-        />
-
         {isRegistrationDocumentsEnabled && (
           <>
             <DocumentUploadField
@@ -629,6 +589,58 @@ export default function Register() {
             />
           </>
         )}
+
+        <Controller
+          name="phone"
+          control={control}
+          rules={{
+            required: 'Введите телефон',
+            pattern: {
+              value: /^\+?[0-9]{10,15}$/,
+              message: 'Некорректный номер телефона',
+            },
+          }}
+          render={({ field }) => (
+            <TextField
+              fullWidth
+              label="Телефон"
+              placeholder="+7 (700) 123-45-67"
+              margin="normal"
+              error={!!errors.phone}
+              helperText={errors.phone?.message}
+              inputRef={field.ref}
+              name={field.name}
+              onBlur={field.onBlur}
+              value={formatPhoneInput(field.value).display}
+              onChange={(e) => {
+                field.onChange(
+                  formatPhoneInput(e.target.value, field.value).value,
+                );
+              }}
+            />
+          )}
+        />
+
+        <TextField
+          fullWidth
+          label="Email"
+          placeholder="nurlanov.erlan@gmail.com"
+          margin="normal"
+          error={!!errors.email}
+          helperText={errors.email?.message}
+          {...register('email', {
+            required: 'Введите email',
+            pattern: {
+              value: /^\S+@\S+\.\S+$/,
+              message: 'Некорректный email',
+            },
+          })}
+          slotProps={{
+            inputLabel: {
+              shrink: email ? true : undefined,
+            },
+          }}
+        />
 
         <PasswordField
           fullWidth

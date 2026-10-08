@@ -227,44 +227,8 @@ export default function Register() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <TextField
           fullWidth
-          label="Email"
-          margin="normal"
-          error={!!errors.email}
-          helperText={errors.email?.message}
-          {...register("email", {
-            required: "Введите email",
-            pattern: {
-              value: /^\S+@\S+\.\S+$/,
-              message: "Некорректный email",
-            },
-          })}
-        />
-
-        <TextField
-          fullWidth
-          label="ИИН"
-          margin="normal"
-          error={!!errors.iin}
-          helperText={errors.iin?.message}
-          {...register("iin", {
-            required: "Введите ИИН",
-          })}
-        />
-
-        <TextField
-          fullWidth
-          label="Название компании"
-          margin="normal"
-          error={!!errors.companyName}
-          helperText={errors.companyName?.message}
-          {...register("companyName", {
-            required: "Введите название компании",
-          })}
-        />
-
-        <TextField
-          fullWidth
-          label="БИН компании"
+          label="БИН"
+          placeholder="210540012345"
           margin="normal"
           error={!!errors.companyBin}
           helperText={errors.companyBin?.message}
@@ -279,29 +243,20 @@ export default function Register() {
 
         <TextField
           fullWidth
-          label="БИК компании"
+          label="Название компании"
+          placeholder="ТОО «Алтын Жол Логистик»"
           margin="normal"
-          error={!!errors.companyBik}
-          helperText={errors.companyBik?.message}
-          {...register("companyBik", {
-            required: "Введите БИК компании",
+          error={!!errors.companyName}
+          helperText={errors.companyName?.message}
+          {...register("companyName", {
+            required: "Введите название компании",
           })}
         />
 
         <TextField
           fullWidth
-          label="Расчетный счет"
-          margin="normal"
-          error={!!errors.companyAccount}
-          helperText={errors.companyAccount?.message}
-          {...register("companyAccount", {
-            required: "Введите расчетный счет",
-          })}
-        />
-
-        <TextField
-          fullWidth
-          label="Адрес компании"
+          label="Юридический адрес"
+          placeholder="г. Алматы, ул. Абая, д. 10, оф. 5"
           margin="normal"
           error={!!errors.companyAddress}
           helperText={errors.companyAddress?.message}
@@ -312,7 +267,32 @@ export default function Register() {
 
         <TextField
           fullWidth
+          label="БИК"
+          placeholder="BANKKZKX"
+          margin="normal"
+          error={!!errors.companyBik}
+          helperText={errors.companyBik?.message}
+          {...register("companyBik", {
+            required: "Введите БИК компании",
+          })}
+        />
+
+        <TextField
+          fullWidth
+          label="ИИК (расчётный счёт)"
+          placeholder="KZ123456789012345678"
+          margin="normal"
+          error={!!errors.companyAccount}
+          helperText={errors.companyAccount?.message}
+          {...register("companyAccount", {
+            required: "Введите расчетный счет",
+          })}
+        />
+
+        <TextField
+          fullWidth
           label="ФИО"
+          placeholder="Нурланов Ерлан Серикович"
           margin="normal"
           error={!!errors.fio}
           helperText={errors.fio?.message}
@@ -321,39 +301,22 @@ export default function Register() {
           })}
         />
 
-        <Controller
-          name="phone"
-          control={control}
-          rules={{
-            required: "Введите телефон",
-            pattern: {
-              value: /^\+?[0-9]{10,15}$/,
-              message: "Некорректный номер телефона",
-            },
-          }}
-          render={({ field }) => (
-            <TextField
-              fullWidth
-              label="Телефон"
-              margin="normal"
-              error={!!errors.phone}
-              helperText={errors.phone?.message}
-              inputRef={field.ref}
-              name={field.name}
-              onBlur={field.onBlur}
-              value={formatPhoneInput(field.value).display}
-              onChange={(e) => {
-                field.onChange(
-                  formatPhoneInput(e.target.value, field.value).value,
-                );
-              }}
-            />
-          )}
+        <TextField
+          fullWidth
+          label="ИИН"
+          placeholder="900115300123"
+          margin="normal"
+          error={!!errors.iin}
+          helperText={errors.iin?.message}
+          {...register("iin", {
+            required: "Введите ИИН",
+          })}
         />
 
         <TextField
           fullWidth
           label="Номер документа"
+          placeholder="012345678"
           margin="normal"
           error={!!errors.documentNumber}
           helperText={errors.documentNumber?.message}
@@ -364,41 +327,13 @@ export default function Register() {
 
         <TextField
           fullWidth
-          label="Страна выдачи"
+          label="Страна документа"
+          placeholder="KZ"
           margin="normal"
           error={!!errors.issueCountry}
           helperText={errors.issueCountry?.message}
           {...register("issueCountry", {
             required: "Введите страну выдачи",
-          })}
-        />
-
-        <PasswordField
-          fullWidth
-          label="Password"
-          margin="normal"
-          error={!!errors.password}
-          helperText={errors.password?.message}
-          {...register("password", {
-            required: "Введите пароль",
-            minLength: {
-              value: 6,
-              message: "Минимум 6 символов",
-            },
-            pattern: passwordPatternRule,
-          })}
-        />
-
-        <PasswordField
-          fullWidth
-          label="Confirm Password"
-          margin="normal"
-          error={!!errors.password_confirm}
-          helperText={errors.password_confirm?.message}
-          {...register("password_confirm", {
-            required: "Подтвердите пароль",
-            validate: (value) =>
-              value === watch("password") || "Пароли не совпадают",
           })}
         />
 
@@ -661,6 +596,82 @@ export default function Register() {
             </FormHelperText>
           )}
         </Box>
+
+        <Controller
+          name="phone"
+          control={control}
+          rules={{
+            required: "Введите телефон",
+            pattern: {
+              value: /^\+?[0-9]{10,15}$/,
+              message: "Некорректный номер телефона",
+            },
+          }}
+          render={({ field }) => (
+            <TextField
+              fullWidth
+              label="Телефон"
+              placeholder="+7 (700) 123-45-67"
+              margin="normal"
+              error={!!errors.phone}
+              helperText={errors.phone?.message}
+              inputRef={field.ref}
+              name={field.name}
+              onBlur={field.onBlur}
+              value={formatPhoneInput(field.value).display}
+              onChange={(e) => {
+                field.onChange(
+                  formatPhoneInput(e.target.value, field.value).value,
+                );
+              }}
+            />
+          )}
+        />
+
+        <TextField
+          fullWidth
+          label="Email"
+          placeholder="nurlanov.erlan@gmail.com"
+          margin="normal"
+          error={!!errors.email}
+          helperText={errors.email?.message}
+          {...register("email", {
+            required: "Введите email",
+            pattern: {
+              value: /^\S+@\S+\.\S+$/,
+              message: "Некорректный email",
+            },
+          })}
+        />
+
+        <PasswordField
+          fullWidth
+          label="Пароль"
+          margin="normal"
+          error={!!errors.password}
+          helperText={errors.password?.message}
+          {...register("password", {
+            required: "Введите пароль",
+            minLength: {
+              value: 6,
+              message: "Минимум 6 символов",
+            },
+            pattern: passwordPatternRule,
+          })}
+        />
+
+        <PasswordField
+          fullWidth
+          label="Повторите пароль"
+          margin="normal"
+          error={!!errors.password_confirm}
+          helperText={errors.password_confirm?.message}
+          {...register("password_confirm", {
+            required: "Подтвердите пароль",
+            validate: (value) =>
+              value === watch("password") || "Пароли не совпадают",
+          })}
+        />
 
         <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
           Регистрация

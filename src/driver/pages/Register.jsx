@@ -107,6 +107,7 @@ export default function Register() {
         <TextField
           fullWidth
           label="ФИО"
+          placeholder="Нурланов Ерлан Серикович"
           margin="normal"
           error={!!errors.fullName}
           helperText={errors.fullName?.message}
@@ -115,7 +116,7 @@ export default function Register() {
           })}
           slotProps={{
             inputLabel: {
-              shrink: !!fio,
+              shrink: fio ? true : undefined,
             },
           }}
         />
@@ -123,6 +124,7 @@ export default function Register() {
         <TextField
           fullWidth
           label="Email"
+          placeholder="nurlanov.erlan@gmail.com"
           margin="normal"
           error={!!errors.email}
           helperText={errors.email?.message}
@@ -135,14 +137,14 @@ export default function Register() {
           })}
           slotProps={{
             inputLabel: {
-              shrink: !!email,
+              shrink: email ? true : undefined,
             },
           }}
         />
 
         <PasswordField
           fullWidth
-          label="Password"
+          label="Пароль"
           margin="normal"
           error={!!errors.password}
           helperText={errors.password?.message}
@@ -157,7 +159,7 @@ export default function Register() {
 
         <PasswordField
           fullWidth
-          label="Re-enter password"
+          label="Повторите пароль"
           margin="normal"
           error={!!errors.confirmPassword}
           helperText={errors.confirmPassword?.message}

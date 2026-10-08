@@ -76,6 +76,7 @@ export default function RegisterCitizen() {
         <TextField
           fullWidth
           label="ИИН"
+          placeholder="900115300123"
           margin="normal"
           error={!!errors.iin}
           helperText={errors.iin?.message}
@@ -86,7 +87,8 @@ export default function RegisterCitizen() {
 
         <TextField
           fullWidth
-          label="Номер уд. личности"
+          label="Номер документа"
+          placeholder="012345678"
           margin="normal"
           disabled={isForeign}
           {...register('docNumber')}
@@ -95,6 +97,7 @@ export default function RegisterCitizen() {
         <TextField
           fullWidth
           label="Страна документа"
+          placeholder="KZ"
           margin="normal"
           disabled={isForeign}
           {...register('issueCountry')}
@@ -102,19 +105,21 @@ export default function RegisterCitizen() {
 
         <TextField
           fullWidth
-          label="Кем выдан"
-          margin="normal"
-          disabled={isForeign}
-          {...register('docIssuer')}
-        />
-
-        <TextField
-          fullWidth
           type="date"
+          label="Когда выдан документ"
           margin="normal"
           disabled={isForeign}
           InputLabelProps={{ shrink: true }}
           {...register('docDate')}
+        />
+
+        <TextField
+          fullWidth
+          label="Кем выдан документ"
+          placeholder="МВД РК"
+          margin="normal"
+          disabled={isForeign}
+          {...register('docIssuer')}
         />
 
         <Box mt={2} display="flex" gap={2}>

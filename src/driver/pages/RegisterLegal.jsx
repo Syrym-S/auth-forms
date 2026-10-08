@@ -107,7 +107,8 @@ export default function RegisterLegal() {
 
         <TextField
           fullWidth
-          label="Название ИП"
+          label="Название юр. лица"
+          placeholder="ТОО «Алтын Жол Логистик»"
           margin="normal"
           disabled={!isIP}
           {...register('ipName')}
@@ -116,6 +117,7 @@ export default function RegisterLegal() {
         <TextField
           fullWidth
           label="ИИН"
+          placeholder="900115300123"
           margin="normal"
           disabled={!isIP}
           {...register('ipIIN')}
