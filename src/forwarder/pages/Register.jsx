@@ -22,6 +22,12 @@ import { normalizeBackendParams } from "../../shared/backend-validation-error.he
 import { formatPhoneInput } from "../../shared/phone-format.helpers";
 import { passwordPatternRule } from "../../shared/password-validation.helpers";
 import { PasswordField } from "../../shared/PasswordField";
+import { NotRegisteredModal } from "../../shared/NotRegisteredModal";
+import {
+  getVerifyRegistered,
+  getSupportContacts,
+  getRegistrationNotVerifiedError,
+} from "../../shared/verify-registered.helpers";
 
 function getClaimFromUrl() {
   const searchParams = new URLSearchParams(window.location.search);
@@ -79,6 +85,8 @@ function mapClaimInfoToForm(claimInfo) {
 export default function Register() {
   const [error, setErrorMessage] = useState("");
   const [isClaimLoading, setIsClaimLoading] = useState(false);
+  const [isNotRegisteredOpen, setIsNotRegisteredOpen] = useState(false);
+  const [support, setSupport] = useState(null);
   const claim = getClaimFromUrl();
 
   const {
@@ -247,6 +255,12 @@ export default function Register() {
 
       const res = await registerRequest(payload);
 
+      if (!getVerifyRegistered(res)) {
+        setSupport(getSupportContacts(res));
+        setIsNotRegisteredOpen(true);
+        return;
+      }
+
       const redirectUrl = res?.redirect_url || res?.data?.redirect_url;
 
       if (redirectUrl) {
@@ -256,6 +270,14 @@ export default function Register() {
 
       window.location.href = isStaging ? "/staging/auth/login" : "/auth/login";
     } catch (e) {
+      const notVerifiedSupport = getRegistrationNotVerifiedError(e);
+
+      if (notVerifiedSupport) {
+        setSupport(notVerifiedSupport);
+        setIsNotRegisteredOpen(true);
+        return;
+      }
+
       const ulStatus = e?.response?.data?.ul_status;
 
       if (ulStatus) {
@@ -342,6 +364,11 @@ export default function Register() {
 
   return (
     <AuthLayout>
+      <NotRegisteredModal
+        open={isNotRegisteredOpen}
+        support={support}
+      />
+
       <Typography
         variant="h5"
         mb={2}

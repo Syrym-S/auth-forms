@@ -18,12 +18,20 @@ import { normalizeBackendParams } from "../../shared/backend-validation-error.he
 import { formatPhoneInput } from "../../shared/phone-format.helpers";
 import { passwordPatternRule } from "../../shared/password-validation.helpers";
 import { PasswordField } from "../../shared/PasswordField";
+import { NotRegisteredModal } from "../../shared/NotRegisteredModal";
+import {
+  getVerifyRegistered,
+  getSupportContacts,
+  getRegistrationNotVerifiedError,
+} from "../../shared/verify-registered.helpers";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 export default function Register() {
   const [error, setErrorMessage] = useState("");
+  const [isNotRegisteredOpen, setIsNotRegisteredOpen] = useState(false);
+  const [support, setSupport] = useState(null);
 
   const {
     register,
@@ -117,8 +125,21 @@ export default function Register() {
         "Документ о трудоустройстве сотрудника с правом подписи или приказ о назначении первого руководителя",
       );
 
-      await registerRequest(formData);
+      const res = await registerRequest(formData);
+
+      if (!getVerifyRegistered(res)) {
+        setSupport(getSupportContacts(res));
+        setIsNotRegisteredOpen(true);
+      }
     } catch (e) {
+      const notVerifiedSupport = getRegistrationNotVerifiedError(e);
+
+      if (notVerifiedSupport) {
+        setSupport(notVerifiedSupport);
+        setIsNotRegisteredOpen(true);
+        return;
+      }
+
       const ulStatus = e?.response?.data?.ul_status;
 
       if (ulStatus) {
@@ -205,6 +226,11 @@ export default function Register() {
 
   return (
     <AuthLayout>
+      <NotRegisteredModal
+        open={isNotRegisteredOpen}
+        support={support}
+      />
+
       <Typography
         variant="h5"
         mb={2}

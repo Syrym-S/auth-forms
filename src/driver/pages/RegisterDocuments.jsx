@@ -18,6 +18,12 @@ import AuthLayout from '../components/AuthLayout';
 import { useRegister } from '../context/RegisterContext';
 import { registerRequestDriver } from '../../api/auth';
 import { saveAuthData } from '../services/authStorage';
+import { NotRegisteredModal } from '../../shared/NotRegisteredModal';
+import {
+  getVerifyRegistered,
+  getSupportContacts,
+  getRegistrationNotVerifiedError,
+} from '../../shared/verify-registered.helpers';
 
 const REGISTRATION_DOCUMENT_NAME =
   'Документ о регистрации юридического лица';
@@ -31,6 +37,8 @@ export default function RegisterDocuments() {
 
   const [error, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isNotRegisteredOpen, setIsNotRegisteredOpen] = useState(false);
+  const [support, setSupport] = useState(null);
 
   const [fileInputKeys, setFileInputKeys] = useState({
     legalRegistrationDocument: 0,
@@ -167,8 +175,22 @@ export default function RegisterDocuments() {
 
       saveAuthData(res.data);
 
+      if (!getVerifyRegistered(res)) {
+        setSupport(getSupportContacts(res));
+        setIsNotRegisteredOpen(true);
+        return;
+      }
+
       window.location.href = '/driver';
     } catch (e) {
+      const notVerifiedSupport = getRegistrationNotVerifiedError(e);
+
+      if (notVerifiedSupport) {
+        setSupport(notVerifiedSupport);
+        setIsNotRegisteredOpen(true);
+        return;
+      }
+
       const params = e?.response?.data?.data?.params;
       const paramEntries = normalizeBackendParams(params);
 
@@ -208,6 +230,11 @@ export default function RegisterDocuments() {
 
   return (
     <AuthLayout>
+      <NotRegisteredModal
+        open={isNotRegisteredOpen}
+        support={support}
+      />
+
       <Typography
         variant="h5"
         mb={1}

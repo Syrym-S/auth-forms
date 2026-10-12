@@ -25,6 +25,12 @@ import { isStaging } from '../../api/client';
 import { formatPhoneInput } from '../../shared/phone-format.helpers';
 import { passwordPatternRule } from '../../shared/password-validation.helpers';
 import { PasswordField } from '../../shared/PasswordField';
+import { NotRegisteredModal } from '../../shared/NotRegisteredModal';
+import {
+  getVerifyRegistered,
+  getSupportContacts,
+  getRegistrationNotVerifiedError,
+} from '../../shared/verify-registered.helpers';
 import {
   DOCUMENT_ISSUED_BY_OPTIONS,
   getTodayDateInputValue,
@@ -49,6 +55,8 @@ export default function Register() {
   // const [valuesFromInviteLink, setValuesFromInviteLink] = useState(null);
   const [error, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isNotRegisteredOpen, setIsNotRegisteredOpen] = useState(false);
+  const [support, setSupport] = useState(null);
   const [fileInputKeys, setFileInputKeys] = useState({
     registration_document: 0,
     signer_authority_document: 0,
@@ -207,8 +215,22 @@ export default function Register() {
 
       console.log('REGISTER SUCCESS', res.data);
 
+      if (!getVerifyRegistered(res)) {
+        setSupport(getSupportContacts(res));
+        setIsNotRegisteredOpen(true);
+        return;
+      }
+
       window.location.href = isStaging ? '/staging/customer' : 'customer';
     } catch (e) {
+      const notVerifiedSupport = getRegistrationNotVerifiedError(e);
+
+      if (notVerifiedSupport) {
+        setSupport(notVerifiedSupport);
+        setIsNotRegisteredOpen(true);
+        return;
+      }
+
       const ulStatus = e?.response?.data?.ul_status;
 
       if (ulStatus) {
@@ -346,6 +368,11 @@ export default function Register() {
 
   return (
     <AuthLayout>
+      <NotRegisteredModal
+        open={isNotRegisteredOpen}
+        support={support}
+      />
+
       <Typography
         variant="h5"
         mb={2}

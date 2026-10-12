@@ -14,9 +14,17 @@ import { loginRequest } from '../../api/auth';
 import { isStaging } from '../../api/client';
 import { getLoginErrorMessage } from '../../shared/login-error.helpers';
 import { PasswordField } from '../../shared/PasswordField';
+import { NotRegisteredModal } from '../../shared/NotRegisteredModal';
+import {
+  getVerifyRegistered,
+  getSupportContacts,
+  getRegistrationNotVerifiedError,
+} from '../../shared/verify-registered.helpers';
 
 export default function Login() {
   const [error, setError] = useState('');
+  const [isNotRegisteredOpen, setIsNotRegisteredOpen] = useState(false);
+  const [support, setSupport] = useState(null);
 
   const {
     register,
@@ -36,6 +44,12 @@ export default function Login() {
       // сюда потом вставишь API
       const res = await loginRequest(payload);
 
+      if (!getVerifyRegistered(res)) {
+        setSupport(getSupportContacts(res));
+        setIsNotRegisteredOpen(true);
+        return;
+      }
+
       const redirectUrl = res?.redirect_url || res?.data?.redirect_url;
 
       if (redirectUrl) {
@@ -45,12 +59,25 @@ export default function Login() {
         window.location.href = isStaging ? '/staging/forwarder' : '/forwarder';
       }
     } catch (e) {
+      const notVerifiedSupport = getRegistrationNotVerifiedError(e);
+
+      if (notVerifiedSupport) {
+        setSupport(notVerifiedSupport);
+        setIsNotRegisteredOpen(true);
+        return;
+      }
+
       setError(getLoginErrorMessage(e));
     }
   };
 
   return (
     <AuthLayout>
+      <NotRegisteredModal
+        open={isNotRegisteredOpen}
+        support={support}
+      />
+
       <Typography
         variant="h5"
         mb={2}
