@@ -15,16 +15,26 @@ import { isStaging } from "../../api/client";
 import { getLoginErrorMessage } from "../../shared/login-error.helpers";
 import { PasswordField } from "../../shared/PasswordField";
 import { NotRegisteredModal } from "../../shared/NotRegisteredModal";
+import { EcpLoginButton } from "../../shared/EcpLoginButton";
+import {
+  getEcpRedirectErrorMessage,
+  isEcpPendingRegistration,
+} from "../../shared/ecp-login.helpers";
 import {
   getVerifyRegistered,
   getSupportContacts,
   getRegistrationNotVerifiedError,
+  getAppDataSupportContacts,
 } from "../../shared/verify-registered.helpers";
 
 export default function Login() {
-  const [error, setError] = useState("");
-  const [isNotRegisteredOpen, setIsNotRegisteredOpen] = useState(false);
-  const [support, setSupport] = useState(null);
+  const [error, setError] = useState(getEcpRedirectErrorMessage);
+  const [isNotRegisteredOpen, setIsNotRegisteredOpen] = useState(
+    isEcpPendingRegistration,
+  );
+  const [support, setSupport] = useState(() =>
+    isEcpPendingRegistration() ? getAppDataSupportContacts() : null,
+  );
 
   const {
     register,
@@ -162,6 +172,12 @@ export default function Login() {
 
       <Box mt={3}>
         <Divider sx={{ mb: 2 }} />
+
+        <EcpLoginButton
+          onError={setError}
+          disabled={isSubmitting}
+          sx={{ mb: 2 }}
+        />
 
         <Button component={Link} to="/register" fullWidth variant="outlined">
           Регистрация

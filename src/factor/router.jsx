@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
+import { LoginRedirect } from '../shared/LoginRedirect';
 import Register from './pages/Register';
 import ForgotPassword from './pages/password/ForgotPassword';
 import ResetPassword from './pages/password/ResetPassword';
@@ -25,7 +26,7 @@ export default function FactorRouter() {
   return (
     <BrowserRouter basename={basename}>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<LoginRedirect />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

@@ -57,3 +57,13 @@ export function getRegistrationNotVerifiedError(error) {
     email: support.email || "",
   };
 }
+
+export function getAppDataSupportContacts() {
+  const support =
+    (typeof window === "undefined" ? null : window?.APP_DATA?.support) || {};
+
+  return {
+    phone: support.phone || "",
+    email: support.email || "",
+  };
+}
