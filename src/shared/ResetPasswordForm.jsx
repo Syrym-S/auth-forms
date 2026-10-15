@@ -1,7 +1,7 @@
+import FormInput from './FormInput';
+import FormButton from './FormButton';
 import {
   Box,
-  TextField,
-  Button,
   Typography,
   Divider,
   Alert,
@@ -10,9 +10,14 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { resetPasswordRequest } from '../api/auth';
-import { PasswordField } from './PasswordField';
 
-export function ResetPasswordForm({ loginPath = '/login' }) {
+export function ResetPasswordForm({
+  loginPath = '/login',
+  ButtonComponent: buttonComponent = FormButton,
+  InputComponent: inputComponent = FormInput,
+}) {
+  const InputComponent = inputComponent;
+  const ButtonComponent = buttonComponent;
   const [searchParams] = useSearchParams();
 
   const userId = searchParams.get('user_id');
@@ -114,7 +119,8 @@ export function ResetPasswordForm({ loginPath = '/login' }) {
 
       {!successMessage && (
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-          <PasswordField
+          <InputComponent
+            type="password"
             fullWidth
             label="Новый пароль"
             margin="normal"
@@ -130,7 +136,8 @@ export function ResetPasswordForm({ loginPath = '/login' }) {
             })}
           />
 
-          <PasswordField
+          <InputComponent
+            type="password"
             fullWidth
             label="Повторите пароль"
             margin="normal"
@@ -143,7 +150,7 @@ export function ResetPasswordForm({ loginPath = '/login' }) {
             })}
           />
 
-          <Button
+          <ButtonComponent
             fullWidth
             type="submit"
             variant="contained"
@@ -151,16 +158,16 @@ export function ResetPasswordForm({ loginPath = '/login' }) {
             disabled={!hasResetParams || isSubmitting}
           >
             {isSubmitting ? 'Сохраняем...' : 'Сбросить пароль'}
-          </Button>
+          </ButtonComponent>
         </Box>
       )}
 
       <Box mt={3}>
         <Divider sx={{ mb: 2 }} />
 
-        <Button component={Link} to={loginPath} fullWidth variant="outlined">
+        <ButtonComponent component={Link} to={loginPath} fullWidth variant="outlined">
           Вернуться ко входу
-        </Button>
+        </ButtonComponent>
       </Box>
     </>
   );

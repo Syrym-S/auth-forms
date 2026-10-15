@@ -1,7 +1,7 @@
+import FormButton from '../../shared/FormButton';
+import FormInput from '../../shared/FormInput';
 import {
   Box,
-  TextField,
-  Button,
   Typography,
   Divider,
   Alert,
@@ -14,7 +14,6 @@ import { useRegister } from "../context/RegisterContext";
 import { useForm } from "react-hook-form";
 import { useLocation } from "react-router-dom";
 import { getClaimInfoApi } from "../../api/auth";
-import { PasswordField } from "../../shared/PasswordField";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -104,7 +103,7 @@ export default function Register() {
       )}
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField
+        <FormInput
           fullWidth
           label="ФИО"
           placeholder="Нурланов Ерлан Серикович"
@@ -121,7 +120,7 @@ export default function Register() {
           }}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Email"
           placeholder="nurlanov.erlan@gmail.com"
@@ -142,7 +141,8 @@ export default function Register() {
           }}
         />
 
-        <PasswordField
+        <FormInput
+          type="password"
           fullWidth
           label="Пароль"
           margin="normal"
@@ -157,7 +157,8 @@ export default function Register() {
           })}
         />
 
-        <PasswordField
+        <FormInput
+          type="password"
           fullWidth
           label="Повторите пароль"
           margin="normal"
@@ -170,16 +171,16 @@ export default function Register() {
           })}
         />
 
-        <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
+        <FormButton fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
           Дальше
-        </Button>
+        </FormButton>
 
         <Box mt={3}>
           <Divider sx={{ mb: 2 }} />
 
-          <Button component={Link} to="/login" fullWidth variant="outlined">
+          <FormButton component={Link} to="/login" fullWidth variant="outlined">
             Войти
-          </Button>
+          </FormButton>
         </Box>
       </form>
     </AuthLayout>

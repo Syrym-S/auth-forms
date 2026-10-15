@@ -18,6 +18,7 @@ export default function AuthLayout({ children }) {
             xs: 320,
             md: 380,
           },
+          my: 4,
           p: 4,
           borderRadius: 3,
           border: "1px solid #e5e7eb",

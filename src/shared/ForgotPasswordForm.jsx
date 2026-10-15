@@ -1,7 +1,7 @@
+import FormInput from './FormInput';
+import FormButton from './FormButton';
 import {
   Box,
-  TextField,
-  Button,
   Typography,
   Divider,
   Alert,
@@ -11,7 +11,13 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { forgotPasswordRequest } from '../api/auth';
 
-export function ForgotPasswordForm({ loginPath = '/login' }) {
+export function ForgotPasswordForm({
+  loginPath = '/login',
+  ButtonComponent: buttonComponent = FormButton,
+  InputComponent: inputComponent = FormInput,
+}) {
+  const InputComponent = inputComponent;
+  const ButtonComponent = buttonComponent;
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -85,7 +91,7 @@ export function ForgotPasswordForm({ loginPath = '/login' }) {
       )}
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-        <TextField
+        <InputComponent
           fullWidth
           label="Email"
           type="email"
@@ -101,7 +107,7 @@ export function ForgotPasswordForm({ loginPath = '/login' }) {
           })}
         />
 
-        <Button
+        <ButtonComponent
           fullWidth
           type="submit"
           variant="contained"
@@ -109,15 +115,15 @@ export function ForgotPasswordForm({ loginPath = '/login' }) {
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Отправляем...' : 'Отправить ссылку'}
-        </Button>
+        </ButtonComponent>
       </Box>
 
       <Box mt={3}>
         <Divider sx={{ mb: 2 }} />
 
-        <Button component={Link} to={loginPath} fullWidth variant="outlined">
+        <ButtonComponent component={Link} to={loginPath} fullWidth variant="outlined">
           Вернуться ко входу
-        </Button>
+        </ButtonComponent>
       </Box>
     </>
   );
