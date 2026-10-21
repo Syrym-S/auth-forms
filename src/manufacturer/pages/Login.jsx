@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 
 import AuthLayout from "../components/AuthLayout";
-import { loginRequest } from "../../api/auth";
-import { api, isStaging } from "../../api/client";
+import { loginRequest } from "../api/auth";
+import { isStaging } from "../../api/client";
 import { getLoginErrorMessage } from "../../shared/login-error.helpers";
 import { NotRegisteredModal } from "../../shared/NotRegisteredModal";
 import {

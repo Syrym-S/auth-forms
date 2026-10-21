@@ -13,7 +13,11 @@ import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
 import { useForm, Controller } from "react-hook-form";
 import { useState, useEffect } from "react";
-import { registerRequest, getClaimInfoApi } from "../../api/auth";
+import {
+  registerRequest,
+  getClaimInfoApi,
+  searchCustomersRequest,
+} from "../api/auth";
 import { isStaging } from "../../api/client";
 import { normalizeBackendParams } from "../../shared/backend-validation-error.helpers";
 import { formatPhoneInput } from "../../shared/phone-format.helpers";
@@ -25,7 +29,6 @@ import {
   getSupportContacts,
   getRegistrationNotVerifiedError,
 } from "../../shared/verify-registered.helpers";
-import { customers } from "./mock.data";
 import {
   DOCUMENT_ISSUED_BY_OPTIONS,
   getTodayDateInputValue,
@@ -85,6 +88,10 @@ function mapClaimInfoToForm(claimInfo) {
 
 export default function Register() {
   const [selectedCustomers, setSelectedCustomers] = useState([]);
+  const [customerQuery, setCustomerQuery] = useState("");
+  const [customerOptions, setCustomerOptions] = useState([]);
+  const [isCustomerLoading, setIsCustomerLoading] = useState(false);
+  const [customerSearchError, setCustomerSearchError] = useState("");
   const [error, setErrorMessage] = useState("");
   const [isClaimLoading, setIsClaimLoading] = useState(false);
   const [isNotRegisteredOpen, setIsNotRegisteredOpen] = useState(false);
@@ -96,7 +103,6 @@ export default function Register() {
     handleSubmit,
     watch,
     reset,
-    setValue,
     setError,
     control,
     formState: { errors, isSubmitting },
@@ -171,6 +177,42 @@ export default function Register() {
   const password = watch("password");
 
   useEffect(() => {
+    const query = customerQuery.trim();
+    if (!query) return;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(async () => {
+      try {
+        if (!(window?.APP_DATA?.nonce || window?.app_data?.nonce)) {
+          throw new Error("Не удалось получить WP nonce. Обновите страницу.");
+        }
+
+        const response = await searchCustomersRequest(query, controller.signal);
+        if (!controller.signal.aborted) {
+          setCustomerOptions(response.data.items || []);
+        }
+      } catch (requestError) {
+        if (!controller.signal.aborted) {
+          setCustomerSearchError(
+            requestError.response?.data?.message ||
+              requestError.message ||
+              "Не удалось загрузить заказчиков. Повторите поиск.",
+          );
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsCustomerLoading(false);
+        }
+      }
+    }, 300);
+
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [customerQuery]);
+
+  useEffect(() => {
     if (!claim) {
       return;
     }
@@ -221,26 +263,27 @@ export default function Register() {
     console.log(data);
 
     try {
-      const payload = new FormData();
-
-      payload.append("bin", data.bin);
-      payload.append("company_name", data.companyName);
-      payload.append("company_address", data.companyAddress);
-      payload.append("company_account", data.companyAccount);
-      payload.append("company_bik", data.companyBik);
-      payload.append("fio", data.managerName);
-      payload.append("phone", data.phone);
-      payload.append("iin", data.iin);
-      payload.append("document_number", data.documentNumber);
-      payload.append("issue_country", data.issueCountry);
-      payload.append("email", data.email);
-      payload.append("password", data.password);
-      payload.append("password_confirm", data.confirmPassword);
-      payload.append("document_issue_date", data.document_issue_date);
-      payload.append("document_issued_by", data.document_issued_by);
+      const payload = {
+        bin: data.bin,
+        company_name: data.companyName,
+        company_address: data.companyAddress,
+        company_account: data.companyAccount,
+        company_bik: data.companyBik,
+        fio: data.fio,
+        phone: data.phone,
+        iin: data.iin,
+        document_number: data.documentNumber,
+        issue_country: data.issueCountry,
+        email: data.email,
+        password: data.password,
+        password_confirm: data.confirmPassword,
+        document_issue_date: data.document_issue_date,
+        document_issued_by: data.document_issued_by,
+        customerIds: selectedCustomers.map((customer) => customer.id),
+      };
 
       if (claim) {
-        payload.append("invite", claim);
+        payload.invite = claim;
       }
 
       // payload.append("registration_document", data.registration_document[0]);
@@ -412,6 +455,18 @@ export default function Register() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormInput
             fullWidth
+            label="ФИО"
+            placeholder="210540012345"
+            margin="normal"
+            error={!!errors.fio}
+            helperText={errors.fio?.message}
+            {...register("fio", {
+              required: "ФИО обязателен",
+            })}
+          />
+
+          <FormInput
+            fullWidth
             label="БИН"
             placeholder="210540012345"
             margin="normal"
@@ -564,10 +619,28 @@ export default function Register() {
 
           <Autocomplete
             multiple
-            options={customers}
+            options={customerOptions}
             value={selectedCustomers}
             onChange={(_, newValue) => setSelectedCustomers(newValue)}
-            getOptionLabel={(option) => option?.name ?? ""}
+            inputValue={customerQuery}
+            onInputChange={(_, value) => {
+              if (value === customerQuery) return;
+              setCustomerQuery(value);
+              setCustomerOptions([]);
+              setCustomerSearchError("");
+              setIsCustomerLoading(Boolean(value.trim()));
+            }}
+            filterOptions={(options) => options}
+            filterSelectedOptions
+            loading={isCustomerLoading}
+            loadingText="Поиск заказчиков..."
+            noOptionsText={
+              customerSearchError ||
+              (customerQuery.trim()
+                ? "Заказчики не найдены"
+                : "Введите название или БИН заказчика")
+            }
+            getOptionLabel={(option) => option?.fullName ?? ""}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             renderOption={(props, option) => (
               <Box
@@ -606,7 +679,7 @@ export default function Register() {
                       overflowWrap: "anywhere",
                     }}
                   >
-                    {option.name || "Без названия"}
+                    {option.fullName || "Без названия"}
                   </Typography>
                   {option.type && (
                     <Typography
@@ -712,7 +785,12 @@ export default function Register() {
               </Box>
             )}
             renderInput={(params) => (
-              <FormInput {...params} label="Выберите заказчиков" />
+              <FormInput
+                {...params}
+                label="Выберите заказчиков"
+                error={!!customerSearchError}
+                helperText={customerSearchError}
+              />
             )}
             sx={{
               "& .MuiAutocomplete-tag": {
