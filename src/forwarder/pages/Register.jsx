@@ -44,10 +44,8 @@ function mapClaimInfoToForm(claimInfo) {
   return {
     bin: claimInfo.company_bin || claimInfo.bin || "",
     companyName: claimInfo.company_name || claimInfo.companyName || "",
-    companyAddress:
-      claimInfo.company_address || claimInfo.companyAddress || "",
-    companyAccount:
-      claimInfo.company_account || claimInfo.companyAccount || "",
+    companyAddress: claimInfo.company_address || claimInfo.companyAddress || "",
+    companyAccount: claimInfo.company_account || claimInfo.companyAccount || "",
     companyBik: claimInfo.company_bik || claimInfo.companyBik || "",
 
     managerName:
@@ -282,7 +280,7 @@ export default function Register() {
       if (ulStatus) {
         if (ulStatus === "pending") {
           setErrorMessage(
-            'Не удалось найти организацию по указанному БИН. Проверьте правильность БИН и повторите попытку.',
+            "Не удалось найти организацию по указанному БИН. Проверьте правильность БИН и повторите попытку.",
           );
         } else if (ulStatus === "unknown") {
           setErrorMessage(
@@ -363,10 +361,7 @@ export default function Register() {
 
   return (
     <AuthLayout>
-      <NotRegisteredModal
-        open={isNotRegisteredOpen}
-        support={support}
-      />
+      <NotRegisteredModal open={isNotRegisteredOpen} support={support} />
 
       <Typography
         variant="h5"
