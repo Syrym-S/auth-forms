@@ -29,3 +29,4 @@ dist-ssr
 .env.ftp.driver
 .env.ftp.customer
 .env.ftp.forwarder
+.env.ftp.manufacturer

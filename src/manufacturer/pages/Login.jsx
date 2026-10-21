@@ -15,13 +15,8 @@ import {
   getSupportContacts,
   getRegistrationNotVerifiedError,
 } from "../../shared/verify-registered.helpers";
-import axios from "axios";
 
 export default function Login() {
-  console.log("Hello,world!");
-  console.log(api.baseURL);
-  console.log(axios.baseURL);
-
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isNotRegisteredOpen, setIsNotRegisteredOpen] = useState(false);
@@ -45,7 +40,7 @@ export default function Login() {
         password: data.password,
       };
 
-      const nonce = window?.APP_DATA?.nonce || window?.app_data?.nonce;
+      const nonce = window?.APP_DATA?.nonce;
 
       if (!nonce) {
         setError("Не удалось получить WP nonce. Обновите страницу.");
