@@ -30,3 +30,5 @@ export const getClaimInfoApi = (claimCode) =>
       claim: claimCode,
     },
   });
+
+export const getEcpLoginUrlRequest = () => api.get("/auth/v1/ecp");

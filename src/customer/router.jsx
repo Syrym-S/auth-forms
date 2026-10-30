@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { isStaging } from '../api/client';
+import { LoginRedirect } from '../shared/LoginRedirect';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/password/ForgotPassword';
@@ -9,7 +10,7 @@ export default function CustomerRouter() {
   return (
     <BrowserRouter basename={isStaging ? '/staging/auth' : '/auth'}>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<LoginRedirect />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
