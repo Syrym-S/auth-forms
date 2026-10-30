@@ -1,9 +1,10 @@
 import { AuthLocaleContext } from "./auth-locale.context";
+import AuthLanguagesProvider from "../shared/AuthLanguagesProvider";
 
-export default function AuthLocaleProvider({ children }) {
+export default function AuthLocaleProvider({ role, children }) {
   return (
     <AuthLocaleContext.Provider value={true}>
-      {children}
+      <AuthLanguagesProvider role={role}>{children}</AuthLanguagesProvider>
     </AuthLocaleContext.Provider>
   );
 }

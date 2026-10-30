@@ -3,7 +3,7 @@ import AuthLocaleProvider from "./i18n/AuthLocaleProvider";
 
 export default function ManufacturerApp() {
   return (
-    <AuthLocaleProvider>
+    <AuthLocaleProvider role="manufacturer">
       <ManufacturerRouter />
     </AuthLocaleProvider>
   );

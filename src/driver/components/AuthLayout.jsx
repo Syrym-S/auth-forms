@@ -2,6 +2,7 @@ import { Box, Paper } from "@mui/material";
 import { useEffect } from "react";
 import { useRegister } from "../context/RegisterContext";
 import { useLocation } from "react-router-dom";
+import LanguageSelect from "../../shared/LanguageSelect";
 
 export default function AuthLayout({ children }) {
   const { form, setInvite } = useRegister();
@@ -59,6 +60,7 @@ export default function AuthLayout({ children }) {
         }}
       >
         {children}
+        <LanguageSelect />
       </Paper>
     </Box>
   );

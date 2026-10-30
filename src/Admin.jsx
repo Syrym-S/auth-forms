@@ -3,7 +3,7 @@ import AuthLocaleProvider from "./i18n/AuthLocaleProvider";
 
 export default function AdminApp() {
   return (
-    <AuthLocaleProvider>
+    <AuthLocaleProvider role="admin">
       <AdminRouter />
     </AuthLocaleProvider>
   );

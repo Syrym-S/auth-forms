@@ -4,7 +4,7 @@ import AuthLocaleProvider from './i18n/AuthLocaleProvider';
 
 export default function CustomerApp() {
   return (
-    <AuthLocaleProvider>
+    <AuthLocaleProvider role="customer">
       <InviteProvider>
         <CustomerRouter />
       </InviteProvider>

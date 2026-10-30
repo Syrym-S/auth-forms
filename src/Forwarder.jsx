@@ -3,7 +3,7 @@ import AuthLocaleProvider from './i18n/AuthLocaleProvider';
 
 export default function ForwarderApp() {
   return (
-    <AuthLocaleProvider>
+    <AuthLocaleProvider role="forwarder">
       <ForwarderRouter />
     </AuthLocaleProvider>
   );

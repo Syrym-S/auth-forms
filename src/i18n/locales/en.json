@@ -143,5 +143,8 @@
   "Email": "Email",
   "Email:": "Email:",
   "Password": "Password",
-  "Удалить файл": "Remove file"
+  "Удалить файл": "Remove file",
+  "Загрузка языков...": "Loading languages...",
+  "Не удалось загрузить языки": "Could not load languages",
+  "Нет доступных языков": "No languages available"
 }

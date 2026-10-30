@@ -3,7 +3,7 @@ import AuthLocaleProvider from './i18n/AuthLocaleProvider';
 
 export default function FactorApp() {
   return (
-    <AuthLocaleProvider>
+    <AuthLocaleProvider role="factor">
       <FactorRouter />
     </AuthLocaleProvider>
   );
