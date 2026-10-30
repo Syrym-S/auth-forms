@@ -1,7 +1,6 @@
+import FormButton from '../../shared/FormButton';
 import {
   Box,
-  TextField,
-  Button,
   Typography,
   Divider,
   Alert,
@@ -13,7 +12,7 @@ import { useState } from 'react';
 import { loginRequest } from '../../api/auth';
 import { isStaging } from '../../api/client';
 import { getLoginErrorMessage } from '../../shared/login-error.helpers';
-import { PasswordField } from '../../shared/PasswordField';
+import FormInput from '../../shared/FormInput';
 import { NotRegisteredModal } from '../../shared/NotRegisteredModal';
 import { EcpLoginButton } from '../../shared/EcpLoginButton';
 import {
@@ -85,7 +84,8 @@ export default function Login() {
     <AuthLayout>
       <NotRegisteredModal
         open={isNotRegisteredOpen}
-        support={support}
+        support={support}
+
       />
 
       <Typography
@@ -108,7 +108,7 @@ export default function Login() {
       {error && <Alert severity="error">{error}</Alert>}
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField
+        <FormInput
           fullWidth
           label="Email"
           margin="normal"
@@ -123,7 +123,8 @@ export default function Login() {
           })}
         />
 
-        <PasswordField
+        <FormInput
+          type="password"
           fullWidth
           label="Password"
           margin="normal"
@@ -139,29 +140,29 @@ export default function Login() {
         />
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
-          <Button
+          <FormButton
             component={Link}
             to="/forgot-password"
+            variant="text"
             size="small"
             sx={{ px: 0 }}
           >
             Забыли пароль?
-          </Button>
+          </FormButton>
         </Box>
 
-        <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
+        <FormButton fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
           Войти
-        </Button>
+        </FormButton>
       </form>
 
       <Box mt={3}>
         <Divider sx={{ mb: 2 }} />
-
         <EcpLoginButton onError={setError} sx={{ mb: 2 }} />
 
-        <Button component={Link} to="/register" fullWidth variant="outlined">
+        <FormButton component={Link} to="/register" fullWidth variant="outlined">
           Регистрация
-        </Button>
+        </FormButton>
       </Box>
     </AuthLayout>
   );

@@ -1,7 +1,7 @@
+import FormButton from '../../shared/FormButton';
+import FormInput from '../../shared/FormInput';
 import {
   Box,
-  TextField,
-  Button,
   Typography,
   Divider,
   Alert,
@@ -13,7 +13,6 @@ import { useState } from "react";
 import { loginRequest } from "../../api/auth";
 import { isStaging } from "../../api/client";
 import { getLoginErrorMessage } from "../../shared/login-error.helpers";
-import { PasswordField } from "../../shared/PasswordField";
 
 export default function Login() {
   const [error, setError] = useState("");
@@ -73,7 +72,7 @@ export default function Login() {
       {error && <Alert severity="error">{error}</Alert>}
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField
+        <FormInput
           fullWidth
           label="Email"
           margin="normal"
@@ -88,7 +87,8 @@ export default function Login() {
           })}
         />
 
-        <PasswordField
+        <FormInput
+          type="password"
           fullWidth
           label="Password"
           margin="normal"
@@ -103,16 +103,16 @@ export default function Login() {
           })}
         />
 
-        <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
+        <FormButton fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
           Войти
-        </Button>
+        </FormButton>
       </form>
 
       {/* <Box mt={3}>
         <Divider sx={{ mb: 2 }} />
-        <Button component={Link} to="/register" fullWidth variant="outlined">
+        <FormButton component={Link} to="/register" fullWidth variant="outlined">
           Регистрация
-        </Button>
+        </FormButton>
       </Box> */}
     </AuthLayout>
   );

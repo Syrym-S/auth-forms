@@ -1,37 +1,42 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import Driver from './Driver.jsx';
-import Forwarder from './Forwarder.jsx';
-import Customer from './Customer.jsx';
-import Factor from './Factor.jsx';
-import Admin from './Admin.jsx';
+import ReactDOM from "react-dom/client";
+import Driver from "./Driver.jsx";
+import Forwarder from "./Forwarder.jsx";
+import Customer from "./Customer.jsx";
+import Factor from "./Factor.jsx";
+import Admin from "./Admin.jsx";
+import Manufacturer from "./Manufacturer.jsx";
 
 const role = import.meta.env.VITE_AUTH_ROLE;
+
 let App;
 
 switch (role) {
-  case 'driver':
+  case "driver":
     App = Driver;
     break;
 
-  case 'forwarder':
+  case "forwarder":
     App = Forwarder;
     break;
 
-  case 'customer':
+  case "customer":
     App = Customer;
     break;
 
-  case 'factor':
+  case "factor":
     App = Factor;
     break;
 
-  case 'admin':
+  case "admin":
     App = Admin;
     break;
 
+  case "manufacturer":
+    App = Manufacturer;
+    break;
+
   default:
-    throw new Error('Unknown role');
+    throw new Error("Unknown role");
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);

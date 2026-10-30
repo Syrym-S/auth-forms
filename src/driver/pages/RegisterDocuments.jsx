@@ -1,7 +1,7 @@
+import FormButton from '../../shared/FormButton';
 import {
   Alert,
   Box,
-  Button,
   Divider,
   Typography,
 } from '@mui/material';
@@ -281,7 +281,7 @@ export default function RegisterDocuments() {
           onRemove={() => handleRemoveFile('signerAuthorityDocument')}
         />
 
-        <Button
+        <FormButton
           fullWidth
           variant="contained"
           sx={{ mt: 2 }}
@@ -289,19 +289,19 @@ export default function RegisterDocuments() {
           disabled={loading}
         >
           {loading ? 'Загрузка...' : 'Регистрация'}
-        </Button>
+        </FormButton>
       </form>
 
       <Box mt={2}>
         <Divider sx={{ mb: 2 }} />
 
-        <Button
+        <FormButton
           fullWidth
           variant="outlined"
           onClick={() => navigate('/register/legal')}
         >
           Назад
-        </Button>
+        </FormButton>
       </Box>
     </AuthLayout>
   );

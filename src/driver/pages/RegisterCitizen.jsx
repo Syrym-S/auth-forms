@@ -1,8 +1,8 @@
+import FormButton from '../../shared/FormButton';
+import FormInput from '../../shared/FormInput';
 import {
   Box,
-  TextField,
   Divider,
-  Button,
   Typography,
   Checkbox,
   FormControlLabel,
@@ -73,7 +73,7 @@ export default function RegisterCitizen() {
           label="Иностранец?"
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="ИИН"
           placeholder="900115300123"
@@ -85,7 +85,7 @@ export default function RegisterCitizen() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Номер документа"
           placeholder="012345678"
@@ -94,7 +94,7 @@ export default function RegisterCitizen() {
           {...register('docNumber')}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Страна документа"
           placeholder="KZ"
@@ -103,7 +103,7 @@ export default function RegisterCitizen() {
           {...register('issueCountry')}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           type="date"
           label="Когда выдан документ"
@@ -113,7 +113,7 @@ export default function RegisterCitizen() {
           {...register('docDate')}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Кем выдан документ"
           placeholder="МВД РК"
@@ -123,19 +123,19 @@ export default function RegisterCitizen() {
         />
 
         <Box mt={2} display="flex" gap={2}>
-          <Button fullWidth variant="contained" type="submit">
+          <FormButton fullWidth variant="contained" type="submit">
             Дальше
-          </Button>
+          </FormButton>
 
           <Divider sx={{ mb: 2 }} />
 
-          <Button
+          <FormButton
             fullWidth
             variant="outlined"
             onClick={() => navigate('/register')}
           >
             Назад
-          </Button>
+          </FormButton>
         </Box>
       </form>
     </AuthLayout>

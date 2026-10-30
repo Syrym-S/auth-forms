@@ -1,7 +1,7 @@
+import FormButton from '../../shared/FormButton';
+import FormInput from '../../shared/FormInput';
 import {
   Box,
-  TextField,
-  Button,
   Typography,
   Divider,
   Alert,
@@ -24,7 +24,6 @@ import { useLocation } from 'react-router-dom';
 import { isStaging } from '../../api/client';
 import { formatPhoneInput } from '../../shared/phone-format.helpers';
 import { passwordPatternRule } from '../../shared/password-validation.helpers';
-import { PasswordField } from '../../shared/PasswordField';
 import { NotRegisteredModal } from '../../shared/NotRegisteredModal';
 import {
   getVerifyRegistered,
@@ -398,7 +397,7 @@ export default function Register() {
       )}
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-        <TextField
+        <FormInput
           fullWidth
           label="БИН"
           placeholder="210540012345"
@@ -423,7 +422,7 @@ export default function Register() {
           }}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Название компании"
           placeholder="ТОО «Алтын Жол Логистик»"
@@ -440,7 +439,7 @@ export default function Register() {
           }}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Юридический адрес"
           placeholder="г. Алматы, ул. Абая, д. 10, оф. 5"
@@ -452,7 +451,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Банк"
           placeholder="АО «Пример Банк»"
@@ -462,7 +461,7 @@ export default function Register() {
           {...register('bank_name')}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="БИК"
           placeholder="BANKKZKX"
@@ -472,7 +471,7 @@ export default function Register() {
           {...register('bik')}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="ИИК (расчётный счёт)"
           placeholder="KZ123456789012345678"
@@ -482,7 +481,7 @@ export default function Register() {
           {...register('iik')}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="ФИО"
           placeholder="Нурланов Ерлан Серикович"
@@ -494,7 +493,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="ИИН"
           placeholder="900115300123"
@@ -518,7 +517,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Номер документа"
           placeholder="012345678"
@@ -530,7 +529,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Страна документа"
           placeholder="KZ"
@@ -542,7 +541,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           type="date"
           label="Когда выдан документ"
@@ -568,7 +567,7 @@ export default function Register() {
           control={control}
           rules={{ required: 'Укажите, кем выдан документ' }}
           render={({ field }) => (
-            <TextField
+            <FormInput
               select
               fullWidth
               label="Кем выдан документ"
@@ -586,7 +585,7 @@ export default function Register() {
                   {option}
                 </MenuItem>
               ))}
-            </TextField>
+            </FormInput>
           )}
         />
 
@@ -628,7 +627,7 @@ export default function Register() {
             },
           }}
           render={({ field }) => (
-            <TextField
+            <FormInput
               fullWidth
               label="Телефон"
               placeholder="+7 (700) 123-45-67"
@@ -648,7 +647,7 @@ export default function Register() {
           )}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Email"
           placeholder="nurlanov.erlan@gmail.com"
@@ -669,7 +668,8 @@ export default function Register() {
           }}
         />
 
-        <PasswordField
+        <FormInput
+          type="password"
           fullWidth
           label="Пароль"
           margin="normal"
@@ -685,7 +685,8 @@ export default function Register() {
           })}
         />
 
-        <PasswordField
+        <FormInput
+          type="password"
           fullWidth
           label="Повторите пароль"
           margin="normal"
@@ -697,7 +698,7 @@ export default function Register() {
           })}
         />
 
-        <Button
+        <FormButton
           fullWidth
           type="submit"
           variant="contained"
@@ -705,15 +706,15 @@ export default function Register() {
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Загрузка...' : 'Зарегистрировать'}
-        </Button>
+        </FormButton>
       </Box>
 
       <Box mt={3}>
         <Divider sx={{ mb: 2 }} />
 
-        <Button component={Link} to="/login" fullWidth variant="outlined">
+        <FormButton component={Link} to="/login" fullWidth variant="outlined">
           Войти
-        </Button>
+        </FormButton>
       </Box>
     </AuthLayout>
   );

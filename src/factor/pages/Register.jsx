@@ -1,6 +1,7 @@
+import FormButton from '../../shared/FormButton';
+import FormInput from '../../shared/FormInput';
 import {
   Box,
-  TextField,
   Button,
   Typography,
   Divider,
@@ -17,7 +18,6 @@ import { registerRequest } from "../../api/auth";
 import { normalizeBackendParams } from "../../shared/backend-validation-error.helpers";
 import { formatPhoneInput } from "../../shared/phone-format.helpers";
 import { passwordPatternRule } from "../../shared/password-validation.helpers";
-import { PasswordField } from "../../shared/PasswordField";
 import { NotRegisteredModal } from "../../shared/NotRegisteredModal";
 import {
   getVerifyRegistered,
@@ -251,7 +251,7 @@ export default function Register() {
       {error && <Alert severity="error">{error}</Alert>}
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <TextField
+        <FormInput
           fullWidth
           label="БИН"
           placeholder="210540012345"
@@ -267,7 +267,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Название компании"
           placeholder="ТОО «Алтын Жол Логистик»"
@@ -279,7 +279,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Юридический адрес"
           placeholder="г. Алматы, ул. Абая, д. 10, оф. 5"
@@ -291,7 +291,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="БИК"
           placeholder="BANKKZKX"
@@ -303,7 +303,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="ИИК (расчётный счёт)"
           placeholder="KZ123456789012345678"
@@ -315,7 +315,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="ФИО"
           placeholder="Нурланов Ерлан Серикович"
@@ -327,7 +327,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="ИИН"
           placeholder="900115300123"
@@ -339,7 +339,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Номер документа"
           placeholder="012345678"
@@ -351,7 +351,7 @@ export default function Register() {
           })}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Страна документа"
           placeholder="KZ"
@@ -634,7 +634,7 @@ export default function Register() {
             },
           }}
           render={({ field }) => (
-            <TextField
+            <FormInput
               fullWidth
               label="Телефон"
               placeholder="+7 (700) 123-45-67"
@@ -654,7 +654,7 @@ export default function Register() {
           )}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Email"
           placeholder="nurlanov.erlan@gmail.com"
@@ -670,7 +670,8 @@ export default function Register() {
           })}
         />
 
-        <PasswordField
+        <FormInput
+          type="password"
           fullWidth
           label="Пароль"
           margin="normal"
@@ -686,7 +687,8 @@ export default function Register() {
           })}
         />
 
-        <PasswordField
+        <FormInput
+          type="password"
           fullWidth
           label="Повторите пароль"
           margin="normal"
@@ -699,16 +701,16 @@ export default function Register() {
           })}
         />
 
-        <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
+        <FormButton fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
           Регистрация
-        </Button>
+        </FormButton>
       </form>
 
       <Box mt={3}>
         <Divider sx={{ mb: 2 }} />
-        <Button component={Link} to="/login" fullWidth variant="outlined">
+        <FormButton component={Link} to="/login" fullWidth variant="outlined">
           Войти
-        </Button>
+        </FormButton>
       </Box>
     </AuthLayout>
   );

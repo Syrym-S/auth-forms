@@ -1,7 +1,7 @@
+import FormButton from '../../shared/FormButton';
+import FormInput from '../../shared/FormInput';
 import {
   Box,
-  TextField,
-  Button,
   Typography,
   Checkbox,
   FormControlLabel,
@@ -105,7 +105,7 @@ export default function RegisterLegal() {
           label="ИП?"
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="Название юр. лица"
           placeholder="ТОО «Алтын Жол Логистик»"
@@ -114,7 +114,7 @@ export default function RegisterLegal() {
           {...register('ipName')}
         />
 
-        <TextField
+        <FormInput
           fullWidth
           label="ИИН"
           placeholder="900115300123"
@@ -123,21 +123,21 @@ export default function RegisterLegal() {
           {...register('ipIIN')}
         />
 
-        <Button fullWidth variant="contained" sx={{ mt: 2 }} type="submit" disabled={loading}>
+        <FormButton fullWidth variant="contained" sx={{ mt: 2 }} type="submit" disabled={loading}>
           {loading ? 'Загрузка...' : (isIP ? 'Дальше' : 'Зарегистрироваться')}
-        </Button>
+        </FormButton>
       </form>
 
       <Box mt={2}>
         <Divider sx={{ mb: 2 }} />
 
-        <Button
+        <FormButton
           fullWidth
           variant="outlined"
           onClick={() => navigate('/register/citizen')}
         >
           Назад
-        </Button>
+        </FormButton>
       </Box>
     </AuthLayout>
   );

@@ -1,7 +1,7 @@
+import FormButton from '../../shared/FormButton';
+import FormInput from '../../shared/FormInput';
 import {
   Box,
-  TextField,
-  Button,
   Typography,
   Divider,
   Alert,
@@ -14,7 +14,6 @@ import { useForm } from 'react-hook-form';
 import { isStaging } from '../../api/client';
 import { saveAuthData } from '../services/authStorage';
 import { getLoginErrorMessage } from '../../shared/login-error.helpers';
-import { PasswordField } from '../../shared/PasswordField';
 import { NotRegisteredModal } from '../../shared/NotRegisteredModal';
 import {
   getVerifyRegistered,
@@ -109,7 +108,7 @@ export default function Login() {
       )}
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-        <TextField
+        <FormInput
           fullWidth
           label="Email"
           margin="normal"
@@ -124,7 +123,8 @@ export default function Login() {
           })}
         />
 
-        <PasswordField
+        <FormInput
+          type="password"
           fullWidth
           label="Password"
           margin="normal"
@@ -140,17 +140,17 @@ export default function Login() {
         />
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1 }}>
-          <Button
+          <FormButton variant="text"
             component={Link}
             to="/forgot-password"
             size="small"
             sx={{ px: 0 }}
           >
             Забыли пароль?
-          </Button>
+          </FormButton>
         </Box>
 
-        <Button
+        <FormButton
           fullWidth
           type="submit"
           variant="contained"
@@ -158,15 +158,15 @@ export default function Login() {
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Загрузка...' : 'Войти'}
-        </Button>
+        </FormButton>
       </Box>
 
       <Box mt={3}>
         <Divider sx={{ mb: 2 }} />
 
-        <Button component={Link} to="/register" fullWidth variant="outlined">
+        <FormButton component={Link} to="/register" fullWidth variant="outlined">
           Регистрация
-        </Button>
+        </FormButton>
       </Box>
     </AuthLayout>
   );
