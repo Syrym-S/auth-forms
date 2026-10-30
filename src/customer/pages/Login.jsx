@@ -1,11 +1,6 @@
-import FormButton from '../../shared/FormButton';
-import FormInput from '../../shared/FormInput';
-import {
-  Box,
-  Typography,
-  Divider,
-  Alert,
-} from "@mui/material";
+import FormButton from "../../shared/FormButton";
+import FormInput from "../../shared/FormInput";
+import { Box, Typography, Divider, Alert } from "@mui/material";
 import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
 import { useState } from "react";
@@ -50,7 +45,7 @@ export default function Login() {
     setError("");
 
     try {
-      const res = await loginRequest(data);
+      const res = await loginRequest(data, window?.APP_DATA?.nonce);
 
       if (res.data?.error) {
         throw new Error(res.data.error);
@@ -63,15 +58,13 @@ export default function Login() {
         return;
       }
 
-      const redirectUrl =
-        res?.redirect_url ||
-        res?.data?.redirect_url;
+      const redirectUrl = res?.redirect_url || res?.data?.redirect_url;
 
       if (redirectUrl) {
         window.location.href = redirectUrl;
         return;
       } else {
-         window.location.href = isStaging ? "/staging/customer" : "/customer";
+        window.location.href = isStaging ? "/staging/customer" : "/customer";
       }
     } catch (e) {
       const notVerifiedSupport = getRegistrationNotVerifiedError(e);
@@ -88,11 +81,7 @@ export default function Login() {
 
   return (
     <AuthLayout>
-      <NotRegisteredModal
-        open={isNotRegisteredOpen}
-        support={support}
-
-      />
+      <NotRegisteredModal open={isNotRegisteredOpen} support={support} />
 
       <Typography
         variant="h5"
@@ -150,7 +139,8 @@ export default function Login() {
         />
 
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
-          <FormButton variant="text"
+          <FormButton
+            variant="text"
             component={Link}
             to="/forgot-password"
             size="small"
@@ -180,7 +170,12 @@ export default function Login() {
           sx={{ mb: 2 }}
         />
 
-        <FormButton component={Link} to="/register" fullWidth variant="outlined">
+        <FormButton
+          component={Link}
+          to="/register"
+          fullWidth
+          variant="outlined"
+        >
           Регистрация
         </FormButton>
       </Box>

@@ -1,4 +1,5 @@
 import FormButton from '../../shared/FormButton';
+import RegistrationLanguageSelect from '../../shared/RegistrationLanguageSelect';
 import FormInput from '../../shared/FormInput';
 import {
   Box,
@@ -41,7 +42,9 @@ export default function Register() {
     setValue,
     setError,
     control,
-  } = useForm();
+  } = useForm({
+    defaultValues: { language: "ru" },
+  });
 
   const BACKEND_FIELD_MAP = {
     email: { field: "email", message: "Проверьте правильность email" },
@@ -95,6 +98,7 @@ export default function Register() {
       const formData = new FormData();
 
       formData.append("email", data.email);
+      formData.append("language", data.language);
       formData.append("company_name", data.companyName);
       formData.append("company_bin", data.companyBin);
       formData.append("company_bik", data.companyBik);
@@ -700,6 +704,8 @@ export default function Register() {
               value === watch("password") || "Пароли не совпадают",
           })}
         />
+
+        <RegistrationLanguageSelect control={control} />
 
         <FormButton fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
           Регистрация

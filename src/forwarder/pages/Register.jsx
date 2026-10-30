@@ -1,4 +1,5 @@
 import FormButton from "../../shared/FormButton";
+import RegistrationLanguageSelect from "../../shared/RegistrationLanguageSelect";
 import {
   Box,
   Typography,
@@ -76,6 +77,7 @@ function mapClaimInfoToForm(claimInfo) {
 
     password: "",
     confirmPassword: "",
+    language: "ru",
   };
 }
 
@@ -110,6 +112,7 @@ export default function Register() {
       email: "",
       password: "",
       confirmPassword: "",
+      language: "ru",
       registration_document: null,
       employer_document: null,
     },
@@ -229,6 +232,7 @@ export default function Register() {
       payload.append("document_number", data.documentNumber);
       payload.append("issue_country", data.issueCountry);
       payload.append("email", data.email);
+      payload.append("language", data.language);
       payload.append("password", data.password);
       payload.append("password_confirm", data.confirmPassword);
 
@@ -838,6 +842,8 @@ export default function Register() {
               validate: (value) => value === password || "Пароли не совпадают",
             })}
           />
+
+          <RegistrationLanguageSelect control={control} />
 
           <FormButton
             fullWidth

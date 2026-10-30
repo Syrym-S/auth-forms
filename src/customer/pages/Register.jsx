@@ -1,4 +1,5 @@
 import FormButton from '../../shared/FormButton';
+import RegistrationLanguageSelect from '../../shared/RegistrationLanguageSelect';
 import FormInput from '../../shared/FormInput';
 import {
   Box,
@@ -90,6 +91,7 @@ export default function Register() {
       email: '',
       password: '',
       password_confirm: '',
+      language: 'ru',
     },
   });
 
@@ -166,6 +168,7 @@ export default function Register() {
       payload.append('document_issue_date', data.document_issue_date);
       payload.append('document_issued_by', data.document_issued_by);
       payload.append('email', data.email);
+      payload.append('language', data.language);
       payload.append('password', data.password);
       payload.append('password_confirm', data.password_confirm);
 
@@ -348,6 +351,7 @@ export default function Register() {
         email: data?.person?.email ?? '',
         password: '',
         password_confirm: '',
+        language: 'ru',
       });
     } catch (e) {
       setErrorMessage(
@@ -697,6 +701,8 @@ export default function Register() {
             validate: (value) => value === password || 'Пароли не совпадают',
           })}
         />
+
+        <RegistrationLanguageSelect control={control} />
 
         <FormButton
           fullWidth
