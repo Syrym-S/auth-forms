@@ -1,3 +1,5 @@
+import { useAuthTranslation } from "../i18n/useAuthTranslation";
+import LanguageSelect from './LanguageSelect';
 import FormInput from './FormInput';
 import FormButton from './FormButton';
 import {
@@ -16,6 +18,7 @@ export function ForgotPasswordForm({
   ButtonComponent: buttonComponent = FormButton,
   InputComponent: inputComponent = FormInput,
 }) {
+  const { t, localized } = useAuthTranslation();
   const InputComponent = inputComponent;
   const ButtonComponent = buttonComponent;
   const [error, setError] = useState('');
@@ -70,34 +73,33 @@ export function ForgotPasswordForm({
           },
         }}
       >
-        Восстановление пароля
+        {t("Восстановление пароля")}
       </Typography>
 
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        Введите email, указанный при регистрации. Мы отправим ссылку для сброса
-        пароля.
+        {t("Введите email, указанный при регистрации. Мы отправим ссылку для сброса пароля.")}
       </Typography>
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {t(error)}
         </Alert>
       )}
 
       {successMessage && (
         <Alert severity="success" sx={{ mb: 2 }}>
-          {successMessage}
+          {t(successMessage)}
         </Alert>
       )}
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
         <InputComponent
           fullWidth
-          label="Email"
+          label={t("Email")}
           type="email"
           margin="normal"
           error={!!errors.email}
-          helperText={errors.email?.message}
+          helperText={t(errors.email?.message)}
           {...register('email', {
             required: 'Введите email',
             pattern: {
@@ -107,6 +109,8 @@ export function ForgotPasswordForm({
           })}
         />
 
+        {localized && <LanguageSelect />}
+
         <ButtonComponent
           fullWidth
           type="submit"
@@ -114,7 +118,7 @@ export function ForgotPasswordForm({
           sx={{ mt: 2 }}
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Отправляем...' : 'Отправить ссылку'}
+          {isSubmitting ? t('Отправляем...') : t('Отправить ссылку')}
         </ButtonComponent>
       </Box>
 
@@ -122,7 +126,7 @@ export function ForgotPasswordForm({
         <Divider sx={{ mb: 2 }} />
 
         <ButtonComponent component={Link} to={loginPath} fullWidth variant="outlined">
-          Вернуться ко входу
+          {t("Вернуться ко входу")}
         </ButtonComponent>
       </Box>
     </>

@@ -1,5 +1,7 @@
+import { useAuthTranslation } from "../../i18n/useAuthTranslation";
 import FormButton from "../../shared/FormButton";
 import RegistrationLanguageSelect from "../../shared/RegistrationLanguageSelect";
+import i18n from "../../i18n";
 import {
   Box,
   Typography,
@@ -84,11 +86,12 @@ function mapClaimInfoToForm(claimInfo) {
 
     password: "",
     confirmPassword: "",
-    language: "ru",
+    language: i18n.language,
   };
 }
 
 export default function Register() {
+  const { t } = useAuthTranslation();
   const [selectedCustomers, setSelectedCustomers] = useState([]);
   const [customerQuery, setCustomerQuery] = useState("");
   const [customerOptions, setCustomerOptions] = useState([]);
@@ -123,7 +126,7 @@ export default function Register() {
       email: "",
       password: "",
       confirmPassword: "",
-      language: "ru",
+      language: i18n.language,
       // registration_document: null,
       // employer_document: null,
     },
@@ -408,7 +411,7 @@ export default function Register() {
         setErrorMessage("Проверьте выделенные поля");
       } else if (matchedAny) {
         setErrorMessage(
-          `Проверьте выделенные поля. Также: ${unmatchedMessages.join(", ")}`,
+          { key: "Проверьте выделенные поля. Также: {{messages}}", values: { messages: unmatchedMessages } },
         );
       } else if (unmatchedMessages.length > 0) {
         setErrorMessage(unmatchedMessages.join(", "));
@@ -438,10 +441,12 @@ export default function Register() {
           },
         }}
       >
-        Регистрация
+        {t("Регистрация")}
       </Typography>
 
-      {error && <Alert severity="error">{error}</Alert>}
+      {error && <Alert severity="error">
+        {t(error)}
+      </Alert>}
 
       {isClaimLoading && (
         <Box
@@ -459,92 +464,92 @@ export default function Register() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormInput
             fullWidth
-            label="ФИО"
+            label={t("ФИО")}
             placeholder="210540012345"
             margin="normal"
             error={!!errors.fio}
-            helperText={errors.fio?.message}
+            helperText={t(errors.fio?.message)}
             {...register("fio", {
-              required: "ФИО обязателен",
+              required: t("ФИО обязателен"),
             })}
           />
 
           <FormInput
             fullWidth
-            label="БИН"
+            label={t("БИН")}
             placeholder="210540012345"
             margin="normal"
             error={!!errors.bin}
-            helperText={errors.bin?.message}
+            helperText={t(errors.bin?.message)}
             {...register("bin", {
-              required: "Введите БИН",
+              required: t("Введите БИН"),
               minLength: {
                 value: 12,
-                message: "БИН должен содержать минимум 12 символов",
+                message: t("БИН должен содержать минимум 12 символов"),
               },
             })}
           />
 
           <FormInput
             fullWidth
-            label="Название компании"
-            placeholder="ТОО «Алтын Жол Логистик»"
+            label={t("Название компании")}
+            placeholder={t("ТОО «Алтын Жол Логистик»")}
             margin="normal"
             error={!!errors.companyName}
-            helperText={errors.companyName?.message}
+            helperText={t(errors.companyName?.message)}
             {...register("companyName", {
-              required: "Введите название компании",
+              required: t("Введите название компании"),
             })}
           />
 
           <FormInput
             fullWidth
-            label="Юридический адрес"
-            placeholder="г. Алматы, ул. Абая, д. 10, оф. 5"
+            label={t("Юридический адрес")}
+            placeholder={t("г. Алматы, ул. Абая, д. 10, оф. 5")}
             margin="normal"
             error={!!errors.companyAddress}
-            helperText={errors.companyAddress?.message}
+            helperText={t(errors.companyAddress?.message)}
             {...register("companyAddress", {
-              required: "Введите адрес компании",
+              required: t("Введите адрес компании"),
             })}
           />
 
           <FormInput
             fullWidth
-            label="БИК"
+            label={t("БИК")}
             placeholder="BANKKZKX"
             margin="normal"
             error={!!errors.companyBik}
-            helperText={errors.companyBik?.message}
+            helperText={t(errors.companyBik?.message)}
             {...register("companyBik")}
           />
 
           <FormInput
             fullWidth
-            label="ИИК (расчётный счёт)"
+            label={t("ИИК (расчётный счёт)")}
             placeholder="KZ123456789012345678"
             margin="normal"
             error={!!errors.companyAccount}
-            helperText={errors.companyAccount?.message}
+            helperText={t(errors.companyAccount?.message)}
             {...register("companyAccount")}
           />
 
           <FormInput
             fullWidth
-            label="ИИН"
+            label={t("ИИН")}
             placeholder="900115300123"
             margin="normal"
             error={!!errors.iin}
-            helperText={errors.iin?.message}
+            helperText={t(errors.iin?.message)}
             {...register("iin", {
-              required: "Введите ИИН",
+              required: t("Введите ИИН"),
               minLength: {
                 value: 12,
-                message: "ИИН должен содержать 12 цифр",
+                message: t("ИИН должен содержать 12 цифр"),
               },
               maxLength: {
                 value: 12,
-                message: "ИИН должен содержать 12 цифр",
+                message: t("ИИН должен содержать 12 цифр"),
               },
             })}
           />
@@ -552,12 +557,12 @@ export default function Register() {
           <FormInput
             fullWidth
             type="date"
-            label="Когда выдан документ"
+            label={t("Когда выдан документ")}
             margin="normal"
             error={!!errors.document_issue_date}
-            helperText={errors.document_issue_date?.message}
+            helperText={t(errors.document_issue_date?.message)}
             {...register("document_issue_date", {
-              required: "Укажите дату выдачи документа",
+              required: t("Укажите дату выдачи документа"),
               validate: validateNotAfterToday,
             })}
             slotProps={{
@@ -578,10 +583,10 @@ export default function Register() {
               <FormInput
                 select
                 fullWidth
-                label="Кем выдан документ"
+                label={t("Кем выдан документ")}
                 margin="normal"
                 error={!!errors.document_issued_by}
-                helperText={errors.document_issued_by?.message}
+                helperText={t(errors.document_issued_by?.message)}
                 inputRef={field.ref}
                 name={field.name}
                 value={field.value}
@@ -590,7 +595,7 @@ export default function Register() {
               >
                 {DOCUMENT_ISSUED_BY_OPTIONS.map((option) => (
                   <MenuItem key={option} value={option}>
-                    {option}
+                    {t(option)}
                   </MenuItem>
                 ))}
               </FormInput>
@@ -599,25 +604,25 @@ export default function Register() {
 
           <FormInput
             fullWidth
-            label="Номер документа"
+            label={t("Номер документа")}
             placeholder="012345678"
             margin="normal"
             error={!!errors.documentNumber}
-            helperText={errors.documentNumber?.message}
+            helperText={t(errors.documentNumber?.message)}
             {...register("documentNumber", {
-              required: "Введите номер документа",
+              required: t("Введите номер документа"),
             })}
           />
 
           <FormInput
             fullWidth
-            label="Страна документа"
+            label={t("Страна документа")}
             placeholder="KZ"
             margin="normal"
             error={!!errors.issueCountry}
-            helperText={errors.issueCountry?.message}
+            helperText={t(errors.issueCountry?.message)}
             {...register("issueCountry", {
-              required: "Введите страну документа",
+              required: t("Введите страну документа"),
             })}
           />
 
@@ -637,12 +642,12 @@ export default function Register() {
             filterOptions={(options) => options}
             filterSelectedOptions
             loading={isCustomerLoading}
-            loadingText="Поиск заказчиков..."
+            loadingText={t("Поиск заказчиков...")}
             noOptionsText={
-              customerSearchError ||
+              t(customerSearchError ||
               (customerQuery.trim()
                 ? "Заказчики не найдены"
-                : "Введите название или БИН заказчика")
+                : "Введите название или БИН заказчика"))
             }
             getOptionLabel={(option) => option?.fullName ?? ""}
             isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -683,7 +688,7 @@ export default function Register() {
                       overflowWrap: "anywhere",
                     }}
                   >
-                    {option.fullName || "Без названия"}
+                    {option.fullName || t("Без названия")}
                   </Typography>
                   {option.type && (
                     <Typography
@@ -708,7 +713,7 @@ export default function Register() {
                       color: "text.secondary",
                     }}
                   >
-                    БИН:{" "}
+                    {t("БИН:")}{" "}
                     <Box
                       component="span"
                       sx={{ color: "text.primary", fontWeight: 500 }}
@@ -744,7 +749,7 @@ export default function Register() {
                         <Typography
                           sx={{ fontSize: 12, color: "text.secondary" }}
                         >
-                          ИИН:{" "}
+                          {t("ИИН:")}{" "}
                           <Box
                             component="span"
                             sx={{ color: "text.primary", fontWeight: 500 }}
@@ -757,7 +762,7 @@ export default function Register() {
                         <Typography
                           sx={{ fontSize: 12, color: "text.secondary" }}
                         >
-                          Тел:{" "}
+                          {t("Тел:")}{" "}
                           <Box
                             component="span"
                             sx={{ color: "text.primary", fontWeight: 500 }}
@@ -774,7 +779,7 @@ export default function Register() {
                             overflowWrap: "anywhere",
                           }}
                         >
-                          Email:{" "}
+                          {t("Email:")}{" "}
                           <Box
                             component="span"
                             sx={{ color: "text.primary", fontWeight: 500 }}
@@ -791,9 +796,9 @@ export default function Register() {
             renderInput={(params) => (
               <FormInput
                 {...params}
-                label="Выберите заказчиков"
+                label={t("Выберите заказчиков")}
                 error={!!customerSearchError}
-                helperText={customerSearchError}
+                helperText={t(customerSearchError)}
               />
             )}
             sx={{
@@ -1073,11 +1078,11 @@ export default function Register() {
             render={({ field }) => (
               <FormInput
                 fullWidth
-                label="Телефон"
+                label={t("Телефон")}
                 placeholder="+7 (700) 123-45-67"
                 margin="normal"
                 error={!!errors.phone}
-                helperText={errors.phone?.message}
+                helperText={t(errors.phone?.message)}
                 inputRef={field.ref}
                 name={field.name}
                 onBlur={field.onBlur}
@@ -1093,16 +1098,16 @@ export default function Register() {
 
           <FormInput
             fullWidth
-            label="Email"
+            label={t("Email")}
             placeholder="nurlanov.erlan@gmail.com"
             margin="normal"
             error={!!errors.email}
-            helperText={errors.email?.message}
+            helperText={t(errors.email?.message)}
             {...register("email", {
-              required: "Введите email",
+              required: t("Введите email"),
               pattern: {
                 value: /^\S+@\S+\.\S+$/,
-                message: "Некорректный email",
+                message: t("Некорректный email"),
               },
             })}
           />
@@ -1110,15 +1115,15 @@ export default function Register() {
           <FormInput
             type="password"
             fullWidth
-            label="Пароль"
+            label={t("Пароль")}
             margin="normal"
             error={!!errors.password}
-            helperText={errors.password?.message}
+            helperText={t(errors.password?.message)}
             {...register("password", {
-              required: "Введите пароль",
+              required: t("Введите пароль"),
               minLength: {
                 value: 6,
-                message: "Минимум 6 символов",
+                message: t("Минимум 6 символов"),
               },
               pattern: passwordPatternRule,
             })}
@@ -1127,13 +1132,13 @@ export default function Register() {
           <FormInput
             type="password"
             fullWidth
-            label="Повторите пароль"
+            label={t("Повторите пароль")}
             margin="normal"
             error={!!errors.confirmPassword}
-            helperText={errors.confirmPassword?.message}
+            helperText={t(errors.confirmPassword?.message)}
             {...register("confirmPassword", {
-              required: "Повторите пароль",
-              validate: (value) => value === password || "Пароли не совпадают",
+              required: t("Повторите пароль"),
+              validate: (value) => value === password || t("Пароли не совпадают"),
             })}
           />
 
@@ -1146,7 +1151,7 @@ export default function Register() {
             type="submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Регистрация..." : "Регистрация"}
+            {isSubmitting ? t("Регистрация...") : t("Регистрация")}
           </FormButton>
         </form>
       )}
@@ -1154,7 +1159,7 @@ export default function Register() {
       <Box mt={3}>
         <Divider sx={{ mb: 2 }} />
         <FormButton component={Link} to="/login" fullWidth variant="outlined">
-          Войти
+          {t("Войти")}
         </FormButton>
       </Box>
     </AuthLayout>

@@ -1,3 +1,5 @@
+import LanguageSelect from "../../shared/LanguageSelect";
+import { useAuthTranslation } from "../../i18n/useAuthTranslation";
 import FormButton from "../../shared/FormButton";
 import FormInput from "../../shared/FormInput";
 import { Box, Typography, Divider, Alert } from "@mui/material";
@@ -22,6 +24,7 @@ import {
 } from "../../shared/verify-registered.helpers";
 
 export default function Login() {
+  const { t } = useAuthTranslation();
   const [error, setError] = useState(getEcpRedirectErrorMessage);
   const [isNotRegisteredOpen, setIsNotRegisteredOpen] = useState(
     isEcpPendingRegistration,
@@ -61,10 +64,10 @@ export default function Login() {
       const redirectUrl = res?.redirect_url || res?.data?.redirect_url;
 
       if (redirectUrl) {
-        window.location.href = redirectUrl;
+        window.location.assign(redirectUrl);
         return;
       } else {
-        window.location.href = isStaging ? "/staging/customer" : "/customer";
+        window.location.assign(isStaging ? "/staging/customer" : "/customer");
       }
     } catch (e) {
       const notVerifiedSupport = getRegistrationNotVerifiedError(e);
@@ -97,22 +100,22 @@ export default function Login() {
           },
         }}
       >
-        Вход
+        {t("Вход")}
       </Typography>
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {t(error)}
         </Alert>
       )}
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
         <FormInput
           fullWidth
-          label="Email"
+          label={t("Email")}
           margin="normal"
           error={!!errors.email}
-          helperText={errors.email?.message}
+          helperText={t(errors.email?.message)}
           {...register("email", {
             required: "Введите email",
             pattern: {
@@ -125,10 +128,10 @@ export default function Login() {
         <FormInput
           type="password"
           fullWidth
-          label="Password"
+          label={t("Password")}
           margin="normal"
           error={!!errors.password}
-          helperText={errors.password?.message}
+          helperText={t(errors.password?.message)}
           {...register("password", {
             required: "Введите пароль",
             minLength: {
@@ -146,9 +149,11 @@ export default function Login() {
             size="small"
             sx={{ px: 0 }}
           >
-            Забыли пароль?
+            {t("Забыли пароль?")}
           </FormButton>
         </Box>
+
+        <LanguageSelect />
 
         <FormButton
           fullWidth
@@ -157,7 +162,7 @@ export default function Login() {
           sx={{ mt: 2 }}
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Загрузка..." : "Войти"}
+          {isSubmitting ? t("Загрузка...") : t("Войти")}
         </FormButton>
       </Box>
 
@@ -176,7 +181,7 @@ export default function Login() {
           fullWidth
           variant="outlined"
         >
-          Регистрация
+          {t("Регистрация")}
         </FormButton>
       </Box>
     </AuthLayout>

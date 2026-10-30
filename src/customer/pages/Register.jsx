@@ -1,5 +1,7 @@
+import { useAuthTranslation } from "../../i18n/useAuthTranslation";
 import FormButton from '../../shared/FormButton';
 import RegistrationLanguageSelect from '../../shared/RegistrationLanguageSelect';
+import i18n from '../../i18n';
 import FormInput from '../../shared/FormInput';
 import {
   Box,
@@ -47,6 +49,7 @@ const isRegistrationDocumentsEnabled =
   window?.APP_DATA?.features?.registration_documents !== false;
 
 export default function Register() {
+  const { t } = useAuthTranslation();
   const { invite } = useRegister();
   const { search } = useLocation();
 
@@ -91,7 +94,7 @@ export default function Register() {
       email: '',
       password: '',
       password_confirm: '',
-      language: 'ru',
+      language: i18n.language,
     },
   });
 
@@ -305,7 +308,7 @@ export default function Register() {
         setErrorMessage('Проверьте выделенные поля');
       } else if (matchedAny) {
         setErrorMessage(
-          `Проверьте выделенные поля. Также: ${unmatchedMessages.join(', ')}`,
+          { key: "Проверьте выделенные поля. Также: {{messages}}", values: { messages: unmatchedMessages } },
         );
       } else if (unmatchedMessages.length > 0) {
         setErrorMessage(unmatchedMessages.join(', '));
@@ -351,7 +354,7 @@ export default function Register() {
         email: data?.person?.email ?? '',
         password: '',
         password_confirm: '',
-        language: 'ru',
+        language: i18n.language,
       });
     } catch (e) {
       setErrorMessage(
@@ -390,24 +393,23 @@ export default function Register() {
           },
         }}
       >
-        Регистрация
-        {isLoading && <CircularProgress size={16} sx={{ pl: 2 }} />}
+        {t("Регистрация")}{isLoading && <CircularProgress size={16} sx={{ pl: 2 }} />}
       </Typography>
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {t(error)}
         </Alert>
       )}
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
         <FormInput
           fullWidth
-          label="БИН"
+          label={t("БИН")}
           placeholder="210540012345"
           margin="normal"
           error={!!errors.bin}
-          helperText={errors.bin?.message}
+          helperText={t(errors.bin?.message)}
           {...register('bin', {
             required: 'Введите БИН',
             minLength: {
@@ -428,11 +430,11 @@ export default function Register() {
 
         <FormInput
           fullWidth
-          label="Название компании"
-          placeholder="ТОО «Алтын Жол Логистик»"
+          label={t("Название компании")}
+          placeholder={t("ТОО «Алтын Жол Логистик»")}
           margin="normal"
           error={!!errors.company_name}
-          helperText={errors.company_name?.message}
+          helperText={t(errors.company_name?.message)}
           {...register('company_name', {
             required: 'Введите название компании',
           })}
@@ -445,11 +447,11 @@ export default function Register() {
 
         <FormInput
           fullWidth
-          label="Юридический адрес"
-          placeholder="г. Алматы, ул. Абая, д. 10, оф. 5"
+          label={t("Юридический адрес")}
+          placeholder={t("г. Алматы, ул. Абая, д. 10, оф. 5")}
           margin="normal"
           error={!!errors.legal_address}
-          helperText={errors.legal_address?.message}
+          helperText={t(errors.legal_address?.message)}
           {...register('legal_address', {
             required: 'Введите юридический адрес',
           })}
@@ -457,41 +459,41 @@ export default function Register() {
 
         <FormInput
           fullWidth
-          label="Банк"
-          placeholder="АО «Пример Банк»"
+          label={t("Банк")}
+          placeholder={t("АО «Пример Банк»")}
           margin="normal"
           error={!!errors.bank_name}
-          helperText={errors.bank_name?.message}
+          helperText={t(errors.bank_name?.message)}
           {...register('bank_name')}
         />
 
         <FormInput
           fullWidth
-          label="БИК"
+          label={t("БИК")}
           placeholder="BANKKZKX"
           margin="normal"
           error={!!errors.bik}
-          helperText={errors.bik?.message}
+          helperText={t(errors.bik?.message)}
           {...register('bik')}
         />
 
         <FormInput
           fullWidth
-          label="ИИК (расчётный счёт)"
+          label={t("ИИК (расчётный счёт)")}
           placeholder="KZ123456789012345678"
           margin="normal"
           error={!!errors.iik}
-          helperText={errors.iik?.message}
+          helperText={t(errors.iik?.message)}
           {...register('iik')}
         />
 
         <FormInput
           fullWidth
-          label="ФИО"
-          placeholder="Нурланов Ерлан Серикович"
+          label={t("ФИО")}
+          placeholder={t("Нурланов Ерлан Серикович")}
           margin="normal"
           error={!!errors.fio}
-          helperText={errors.fio?.message}
+          helperText={t(errors.fio?.message)}
           {...register('fio', {
             required: 'Введите ФИО',
           })}
@@ -499,11 +501,11 @@ export default function Register() {
 
         <FormInput
           fullWidth
-          label="ИИН"
+          label={t("ИИН")}
           placeholder="900115300123"
           margin="normal"
           error={!!errors.iin}
-          helperText={errors.iin?.message}
+          helperText={t(errors.iin?.message)}
           {...register('iin', {
             required: 'Введите ИИН',
             minLength: {
@@ -523,11 +525,11 @@ export default function Register() {
 
         <FormInput
           fullWidth
-          label="Номер документа"
+          label={t("Номер документа")}
           placeholder="012345678"
           margin="normal"
           error={!!errors.document_number}
-          helperText={errors.document_number?.message}
+          helperText={t(errors.document_number?.message)}
           {...register('document_number', {
             required: 'Введите номер документа',
           })}
@@ -535,11 +537,11 @@ export default function Register() {
 
         <FormInput
           fullWidth
-          label="Страна документа"
+          label={t("Страна документа")}
           placeholder="KZ"
           margin="normal"
           error={!!errors.issue_country}
-          helperText={errors.issue_country?.message}
+          helperText={t(errors.issue_country?.message)}
           {...register('issue_country', {
             required: 'Введите страну документа',
           })}
@@ -548,10 +550,10 @@ export default function Register() {
         <FormInput
           fullWidth
           type="date"
-          label="Когда выдан документ"
+          label={t("Когда выдан документ")}
           margin="normal"
           error={!!errors.document_issue_date}
-          helperText={errors.document_issue_date?.message}
+          helperText={t(errors.document_issue_date?.message)}
           {...register('document_issue_date', {
             required: 'Укажите дату выдачи документа',
             validate: validateNotAfterToday,
@@ -574,10 +576,10 @@ export default function Register() {
             <FormInput
               select
               fullWidth
-              label="Кем выдан документ"
+              label={t("Кем выдан документ")}
               margin="normal"
               error={!!errors.document_issued_by}
-              helperText={errors.document_issued_by?.message}
+              helperText={t(errors.document_issued_by?.message)}
               inputRef={field.ref}
               name={field.name}
               value={field.value}
@@ -586,7 +588,7 @@ export default function Register() {
             >
               {DOCUMENT_ISSUED_BY_OPTIONS.map((option) => (
                 <MenuItem key={option} value={option}>
-                  {option}
+                  {t(option)}
                 </MenuItem>
               ))}
             </FormInput>
@@ -596,7 +598,7 @@ export default function Register() {
         {isRegistrationDocumentsEnabled && (
           <>
             <DocumentUploadField
-              label={REGISTRATION_DOCUMENT_NAME}
+              label={t(REGISTRATION_DOCUMENT_NAME)}
               file={registrationDocumentFile}
               inputKey={fileInputKeys.registration_document}
               error={errors.registration_document?.message}
@@ -607,7 +609,7 @@ export default function Register() {
             />
 
             <DocumentUploadField
-              label={EMPLOYER_DOCUMENT_NAME}
+              label={t(EMPLOYER_DOCUMENT_NAME)}
               file={signerAuthorityDocumentFile}
               inputKey={fileInputKeys.signer_authority_document}
               error={errors.signer_authority_document?.message}
@@ -633,11 +635,11 @@ export default function Register() {
           render={({ field }) => (
             <FormInput
               fullWidth
-              label="Телефон"
+              label={t("Телефон")}
               placeholder="+7 (700) 123-45-67"
               margin="normal"
               error={!!errors.phone}
-              helperText={errors.phone?.message}
+              helperText={t(errors.phone?.message)}
               inputRef={field.ref}
               name={field.name}
               onBlur={field.onBlur}
@@ -653,11 +655,11 @@ export default function Register() {
 
         <FormInput
           fullWidth
-          label="Email"
+          label={t("Email")}
           placeholder="nurlanov.erlan@gmail.com"
           margin="normal"
           error={!!errors.email}
-          helperText={errors.email?.message}
+          helperText={t(errors.email?.message)}
           {...register('email', {
             required: 'Введите email',
             pattern: {
@@ -675,10 +677,10 @@ export default function Register() {
         <FormInput
           type="password"
           fullWidth
-          label="Пароль"
+          label={t("Пароль")}
           margin="normal"
           error={!!errors.password}
-          helperText={errors.password?.message}
+          helperText={t(errors.password?.message)}
           {...register('password', {
             required: 'Введите пароль',
             minLength: {
@@ -692,10 +694,10 @@ export default function Register() {
         <FormInput
           type="password"
           fullWidth
-          label="Повторите пароль"
+          label={t("Повторите пароль")}
           margin="normal"
           error={!!errors.password_confirm}
-          helperText={errors.password_confirm?.message}
+          helperText={t(errors.password_confirm?.message)}
           {...register('password_confirm', {
             required: 'Подтвердите пароль',
             validate: (value) => value === password || 'Пароли не совпадают',
@@ -711,7 +713,7 @@ export default function Register() {
           sx={{ mt: 2 }}
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Загрузка...' : 'Зарегистрировать'}
+          {isSubmitting ? t('Загрузка...') : t('Зарегистрировать')}
         </FormButton>
       </Box>
 
@@ -719,7 +721,7 @@ export default function Register() {
         <Divider sx={{ mb: 2 }} />
 
         <FormButton component={Link} to="/login" fullWidth variant="outlined">
-          Войти
+          {t("Войти")}
         </FormButton>
       </Box>
     </AuthLayout>

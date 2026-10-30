@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { useAuthTranslation } from "../i18n/useAuthTranslation";
 
 export default function FormInput({
   ref,
@@ -11,8 +12,10 @@ export default function FormInput({
   margin = "normal",
   slotProps,
   sx,
+  helperText,
   ...props
 }) {
+  const { t } = useAuthTranslation();
   const [passwordVisible, setPasswordVisible] = useState(false);
   const fieldRef = inputRef ?? ref;
   const isPassword = type === "password";
@@ -20,6 +23,7 @@ export default function FormInput({
   return (
     <TextField
       {...props}
+      helperText={t(helperText)}
       type={isPassword && passwordVisible ? "text" : type}
       fullWidth={fullWidth}
       margin={margin}
@@ -54,7 +58,7 @@ export default function FormInput({
                   edge="end"
                   tabIndex={-1}
                   aria-label={
-                    passwordVisible ? "Скрыть пароль" : "Показать пароль"
+                    passwordVisible ? t("Скрыть пароль") : t("Показать пароль")
                   }
                   onClick={() => setPasswordVisible((visible) => !visible)}
                 >

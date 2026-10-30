@@ -1,5 +1,10 @@
 import ManufacturerRouter from "./manufacturer/router";
+import AuthLocaleProvider from "./i18n/AuthLocaleProvider";
 
 export default function ManufacturerApp() {
-  return <ManufacturerRouter />;
+  return (
+    <AuthLocaleProvider>
+      <ManufacturerRouter />
+    </AuthLocaleProvider>
+  );
 }

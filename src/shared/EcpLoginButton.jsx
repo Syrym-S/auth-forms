@@ -1,3 +1,4 @@
+import { useAuthTranslation } from "../i18n/useAuthTranslation";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import { getEcpLoginUrlRequest } from "../api/auth";
@@ -7,6 +8,7 @@ import {
 } from "./ecp-login.helpers";
 
 export function EcpLoginButton({ onError, disabled, sx }) {
+  const { t } = useAuthTranslation();
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   async function handleClick() {
@@ -40,7 +42,7 @@ export function EcpLoginButton({ onError, disabled, sx }) {
       disabled={disabled || isRedirecting}
       sx={sx}
     >
-      {isRedirecting ? "Переход к подписанию..." : "Войти по ЭЦП"}
+      {isRedirecting ? t("Переход к подписанию...") : t("Войти по ЭЦП")}
     </Button>
   );
 }

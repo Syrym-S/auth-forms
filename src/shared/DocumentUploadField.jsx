@@ -1,3 +1,4 @@
+import { useAuthTranslation } from "../i18n/useAuthTranslation";
 import { Box, Button, IconButton, Typography } from '@mui/material';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
@@ -13,6 +14,7 @@ function formatFileSize(size) {
 }
 
 function SelectedFilePreview({ file, onRemove }) {
+  const { t } = useAuthTranslation();
   if (!file) {
     return null;
   }
@@ -65,6 +67,7 @@ function SelectedFilePreview({ file, onRemove }) {
 
       <IconButton
         color="error"
+        aria-label={t("Удалить файл")}
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
@@ -85,6 +88,7 @@ export function DocumentUploadField({
   inputProps,
   onRemove,
 }) {
+  const { t } = useAuthTranslation();
   return (
     <Box
       sx={{
@@ -112,7 +116,7 @@ export function DocumentUploadField({
           color: 'text.secondary',
         }}
       >
-        {label}
+        {t(label)}
       </Typography>
 
       {file ? (
@@ -123,8 +127,7 @@ export function DocumentUploadField({
           component="label"
           startIcon={<DescriptionOutlinedIcon />}
         >
-          Выбрать файл
-
+          {t("Выбрать файл")}
           <input
             key={inputKey}
             hidden
@@ -143,7 +146,7 @@ export function DocumentUploadField({
             color: 'error.main',
           }}
         >
-          {error}
+          {t(error)}
         </Typography>
       )}
     </Box>

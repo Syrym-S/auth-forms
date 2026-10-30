@@ -1,3 +1,5 @@
+import { useAuthTranslation } from "../i18n/useAuthTranslation";
+import LanguageSelect from './LanguageSelect';
 import FormInput from './FormInput';
 import FormButton from './FormButton';
 import {
@@ -16,6 +18,7 @@ export function ResetPasswordForm({
   ButtonComponent: buttonComponent = FormButton,
   InputComponent: inputComponent = FormInput,
 }) {
+  const { t, localized } = useAuthTranslation();
   const InputComponent = inputComponent;
   const ButtonComponent = buttonComponent;
   const [searchParams] = useSearchParams();
@@ -92,28 +95,28 @@ export function ResetPasswordForm({
           },
         }}
       >
-        Новый пароль
+        {t("Новый пароль")}
       </Typography>
 
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        Придумайте новый пароль для входа в аккаунт.
+        {t("Придумайте новый пароль для входа в аккаунт.")}
       </Typography>
 
       {!hasResetParams && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          Ссылка для сброса пароля некорректна. Запросите новую ссылку.
+          {t("Ссылка для сброса пароля некорректна. Запросите новую ссылку.")}
         </Alert>
       )}
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {t(error)}
         </Alert>
       )}
 
       {successMessage && (
         <Alert severity="success" sx={{ mb: 2 }}>
-          Пароль успешно изменён. Теперь можно войти с новым паролем.
+          {t("Пароль успешно изменён. Теперь можно войти с новым паролем.")}
         </Alert>
       )}
 
@@ -122,10 +125,10 @@ export function ResetPasswordForm({
           <InputComponent
             type="password"
             fullWidth
-            label="Новый пароль"
+            label={t("Новый пароль")}
             margin="normal"
             error={!!errors.password}
-            helperText={errors.password?.message}
+            helperText={t(errors.password?.message)}
             disabled={!hasResetParams || isSubmitting}
             {...register('password', {
               required: 'Введите новый пароль',
@@ -139,16 +142,18 @@ export function ResetPasswordForm({
           <InputComponent
             type="password"
             fullWidth
-            label="Повторите пароль"
+            label={t("Повторите пароль")}
             margin="normal"
             error={!!errors.password_confirm}
-            helperText={errors.password_confirm?.message}
+            helperText={t(errors.password_confirm?.message)}
             disabled={!hasResetParams || isSubmitting}
             {...register('password_confirm', {
               required: 'Подтвердите пароль',
               validate: (value) => value === password || 'Пароли не совпадают',
             })}
           />
+
+          {localized && <LanguageSelect />}
 
           <ButtonComponent
             fullWidth
@@ -157,7 +162,7 @@ export function ResetPasswordForm({
             sx={{ mt: 2 }}
             disabled={!hasResetParams || isSubmitting}
           >
-            {isSubmitting ? 'Сохраняем...' : 'Сбросить пароль'}
+            {isSubmitting ? t('Сохраняем...') : t('Сбросить пароль')}
           </ButtonComponent>
         </Box>
       )}
@@ -166,7 +171,7 @@ export function ResetPasswordForm({
         <Divider sx={{ mb: 2 }} />
 
         <ButtonComponent component={Link} to={loginPath} fullWidth variant="outlined">
-          Вернуться ко входу
+          {t("Вернуться ко входу")}
         </ButtonComponent>
       </Box>
     </>

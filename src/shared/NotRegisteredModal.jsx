@@ -1,3 +1,4 @@
+import { useAuthTranslation } from "../i18n/useAuthTranslation";
 import {
   Dialog,
   DialogTitle,
@@ -9,6 +10,7 @@ import {
 } from "@mui/material";
 
 export function NotRegisteredModal({ open, support }) {
+  const { t } = useAuthTranslation();
   const { phone = "", email = "" } = support || {};
 
   return (
@@ -19,24 +21,31 @@ export function NotRegisteredModal({ open, support }) {
       maxWidth="xs"
       fullWidth
     >
-      <DialogTitle>Регистрация не подтверждена</DialogTitle>
+      <DialogTitle>
+        {t("Регистрация не подтверждена")}
+      </DialogTitle>
 
       <DialogContent>
         <DialogContentText>
-          Ваша регистрация ожидает подтверждения. Для завершения проверки
-          обратитесь к менеджеру.
+          {t("Ваша регистрация ожидает подтверждения. Для завершения проверки обратитесь к менеджеру.")}
         </DialogContentText>
 
         <Box mt={2}>
           {phone && (
             <Typography variant="body2">
-              Телефон: <MuiLink href={`tel:${phone}`}>{phone}</MuiLink>
+              {t("Телефон:")}{" "}
+              <MuiLink href={`tel:${phone}`}>
+                {phone}
+              </MuiLink>
             </Typography>
           )}
 
           {email && (
             <Typography variant="body2" sx={{ mt: 0.5 }}>
-              Email: <MuiLink href={`mailto:${email}`}>{email}</MuiLink>
+              {t("Email:")}{" "}
+              <MuiLink href={`mailto:${email}`}>
+                {email}
+              </MuiLink>
             </Typography>
           )}
         </Box>

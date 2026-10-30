@@ -1,9 +1,11 @@
+import { useAuthTranslation } from "../i18n/useAuthTranslation";
 import { useState } from 'react';
 import { IconButton, InputAdornment, TextField } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 export function PasswordField({ slotProps, ...props }) {
+  const { t } = useAuthTranslation();
   const [visible, setVisible] = useState(false);
 
   return (
@@ -20,7 +22,7 @@ export function PasswordField({ slotProps, ...props }) {
                 type="button"
                 edge="end"
                 tabIndex={-1}
-                aria-label={visible ? 'Скрыть пароль' : 'Показать пароль'}
+                aria-label={visible ? t('Скрыть пароль') : t('Показать пароль')}
                 onClick={() => setVisible((v) => !v)}
               >
                 {visible ? <VisibilityOffIcon /> : <VisibilityIcon />}
