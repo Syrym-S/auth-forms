@@ -19,6 +19,8 @@ export default function FormInput({
   const [passwordVisible, setPasswordVisible] = useState(false);
   const fieldRef = inputRef ?? ref;
   const isPassword = type === "password";
+  const isLeftToRight = ["email", "tel"].includes(type) ||
+    ["email", "phone"].includes(props.name);
 
   return (
     <TextField
@@ -41,12 +43,21 @@ export default function FormInput({
           "& .MuiInputLabel-root.Mui-focused:not(.Mui-error)": {
             color: "rgb(24, 87, 196)",
           },
-          "& input": { caretColor: "rgb(24, 87, 196)" },
+          "& input": {
+            caretColor: "rgb(24, 87, 196)",
+            // Keep email/phone characters LTR while aligning them with RTL fields.
+            textAlign: (theme) =>
+              isLeftToRight && theme.direction === "rtl" ? "end" : "start",
+          },
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
       slotProps={{
         ...slotProps,
+        htmlInput: {
+          ...(isLeftToRight ? { dir: "ltr" } : {}),
+          ...slotProps?.htmlInput,
+        },
         input: {
           ...slotProps?.input,
           ...(isPassword && {
