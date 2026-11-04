@@ -1,8 +1,8 @@
 import { useAuthTranslation } from "../../i18n/useAuthTranslation";
-import FormButton from '../../shared/FormButton';
-import RegistrationLanguageSelect from '../../shared/RegistrationLanguageSelect';
-import i18n from '../../i18n';
-import FormInput from '../../shared/FormInput';
+import FormButton from "../../shared/FormButton";
+import RegistrationLanguageSelect from "../../shared/RegistrationLanguageSelect";
+import i18n from "../../i18n";
+import FormInput from "../../shared/FormInput";
 import {
   Box,
   Button,
@@ -132,7 +132,7 @@ export default function Register() {
         "Документ о трудоустройстве сотрудника с правом подписи или приказ о назначении первого руководителя",
       );
 
-      const res = await registerRequest(formData);
+      const res = await registerRequest(formData, window?.APP_DATA?.nonce);
 
       if (!getVerifyRegistered(res)) {
         setSupport(getSupportContacts(res));
@@ -218,9 +218,10 @@ export default function Register() {
       if (matchedAny && unmatchedMessages.length === 0) {
         setErrorMessage("Проверьте выделенные поля");
       } else if (matchedAny) {
-        setErrorMessage(
-          { key: "Проверьте выделенные поля. Также: {{messages}}", values: { messages: unmatchedMessages } },
-        );
+        setErrorMessage({
+          key: "Проверьте выделенные поля. Также: {{messages}}",
+          values: { messages: unmatchedMessages },
+        });
       } else if (unmatchedMessages.length > 0) {
         setErrorMessage(unmatchedMessages.join(", "));
       } else {
@@ -233,10 +234,7 @@ export default function Register() {
 
   return (
     <AuthLayout>
-      <NotRegisteredModal
-        open={isNotRegisteredOpen}
-        support={support}
-      />
+      <NotRegisteredModal open={isNotRegisteredOpen} support={support} />
 
       <Typography
         variant="h5"
@@ -255,9 +253,7 @@ export default function Register() {
         {t("Регистрация")}
       </Typography>
 
-      {error && <Alert severity="error">
-        {t(error)}
-      </Alert>}
+      {error && <Alert severity="error">{t(error)}</Alert>}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormInput

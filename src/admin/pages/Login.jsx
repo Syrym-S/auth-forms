@@ -30,7 +30,7 @@ export default function Login() {
       };
 
       // сюда потом вставишь API
-      const res = await loginRequest(payload);
+      const res = await loginRequest(payload, window?.APP_DATA?.nonce);
 
       const redirectUrl = res?.redirect_url || res?.data?.redirect_url;
 
@@ -64,9 +64,7 @@ export default function Login() {
         {t("Вход")}
       </Typography>
 
-      {error && <Alert severity="error">
-        {t(error)}
-      </Alert>}
+      {error && <Alert severity="error">{t(error)}</Alert>}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormInput

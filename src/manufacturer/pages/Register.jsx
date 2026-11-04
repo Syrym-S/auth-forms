@@ -410,9 +410,10 @@ export default function Register() {
       if (matchedAny && unmatchedMessages.length === 0) {
         setErrorMessage("Проверьте выделенные поля");
       } else if (matchedAny) {
-        setErrorMessage(
-          { key: "Проверьте выделенные поля. Также: {{messages}}", values: { messages: unmatchedMessages } },
-        );
+        setErrorMessage({
+          key: "Проверьте выделенные поля. Также: {{messages}}",
+          values: { messages: unmatchedMessages },
+        });
       } else if (unmatchedMessages.length > 0) {
         setErrorMessage(unmatchedMessages.join(", "));
       } else {
@@ -444,9 +445,7 @@ export default function Register() {
         {t("Регистрация")}
       </Typography>
 
-      {error && <Alert severity="error">
-        {t(error)}
-      </Alert>}
+      {error && <Alert severity="error">{t(error)}</Alert>}
 
       {isClaimLoading && (
         <Box
@@ -643,12 +642,12 @@ export default function Register() {
             filterSelectedOptions
             loading={isCustomerLoading}
             loadingText={t("Поиск заказчиков...")}
-            noOptionsText={
-              t(customerSearchError ||
-              (customerQuery.trim()
-                ? "Заказчики не найдены"
-                : "Введите название или БИН заказчика"))
-            }
+            noOptionsText={t(
+              customerSearchError ||
+                (customerQuery.trim()
+                  ? "Заказчики не найдены"
+                  : "Введите название или БИН заказчика"),
+            )}
             getOptionLabel={(option) => option?.fullName ?? ""}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             renderOption={(props, option) => (
@@ -1138,7 +1137,8 @@ export default function Register() {
             helperText={t(errors.confirmPassword?.message)}
             {...register("confirmPassword", {
               required: t("Повторите пароль"),
-              validate: (value) => value === password || t("Пароли не совпадают"),
+              validate: (value) =>
+                value === password || t("Пароли не совпадают"),
             })}
           />
 

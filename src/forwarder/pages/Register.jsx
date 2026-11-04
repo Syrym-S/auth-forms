@@ -257,7 +257,7 @@ export default function Register() {
         "Документ о трудоустройстве сотрудника",
       );
 
-      const res = await registerRequest(payload);
+      const res = await registerRequest(payload, window?.APP_DATA?.nonce);
 
       if (!getVerifyRegistered(res)) {
         setSupport(getSupportContacts(res));
@@ -353,9 +353,10 @@ export default function Register() {
       if (matchedAny && unmatchedMessages.length === 0) {
         setErrorMessage("Проверьте выделенные поля");
       } else if (matchedAny) {
-        setErrorMessage(
-          { key: "Проверьте выделенные поля. Также: {{messages}}", values: { messages: unmatchedMessages } },
-        );
+        setErrorMessage({
+          key: "Проверьте выделенные поля. Также: {{messages}}",
+          values: { messages: unmatchedMessages },
+        });
       } else if (unmatchedMessages.length > 0) {
         setErrorMessage(unmatchedMessages.join(", "));
       } else {
@@ -387,9 +388,7 @@ export default function Register() {
         {t("Регистрация")}
       </Typography>
 
-      {error && <Alert severity="error">
-        {t(error)}
-      </Alert>}
+      {error && <Alert severity="error">{t(error)}</Alert>}
 
       {isClaimLoading && (
         <Box
@@ -560,8 +559,9 @@ export default function Register() {
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
                 {...register("registration_document", {
-                  required:
-                    t("Документ о регистрации юридического лица обязателен"),
+                  required: t(
+                    "Документ о регистрации юридического лица обязателен",
+                  ),
                 })}
               />
             </FormButton>
@@ -685,7 +685,9 @@ export default function Register() {
                 type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
                 {...register("employer_document", {
-                  required: t("Документ о трудоустройстве сотрудника обязателен"),
+                  required: t(
+                    "Документ о трудоустройстве сотрудника обязателен",
+                  ),
                 })}
               />
             </FormButton>
@@ -844,7 +846,8 @@ export default function Register() {
             helperText={t(errors.confirmPassword?.message)}
             {...register("confirmPassword", {
               required: t("Повторите пароль"),
-              validate: (value) => value === password || t("Пароли не совпадают"),
+              validate: (value) =>
+                value === password || t("Пароли не совпадают"),
             })}
           />
 
