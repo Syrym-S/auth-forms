@@ -1,8 +1,8 @@
-import LanguageSelect from "../../shared/LanguageSelect";
+import AuthHeader from "../../shared/AuthHeader";
 import { useAuthTranslation } from "../../i18n/useAuthTranslation";
 import FormButton from "../../shared/FormButton";
 import FormInput from "../../shared/FormInput";
-import { Typography, Alert } from "@mui/material";
+import { Alert } from "@mui/material";
 import AuthLayout from "../components/AuthLayout";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
@@ -47,22 +47,9 @@ export default function Login() {
 
   return (
     <AuthLayout>
-      <Typography
-        variant="h5"
-        mb={2}
-        sx={{
-          fontSize: {
-            xs: "2rem",
-            md: "1.5rem",
-          },
-          fontWeight: {
-            xs: 600,
-            md: 400,
-          },
-        }}
-      >
+      <AuthHeader>
         {t("Вход")}
-      </Typography>
+      </AuthHeader>
 
       {error && <Alert severity="error">{t(error)}</Alert>}
 
@@ -97,8 +84,6 @@ export default function Login() {
             },
           })}
         />
-
-        <LanguageSelect />
 
         <FormButton fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
           {t("Войти")}

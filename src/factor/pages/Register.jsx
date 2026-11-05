@@ -1,3 +1,4 @@
+import AuthHeader from "../../shared/AuthHeader";
 import { useAuthTranslation } from "../../i18n/useAuthTranslation";
 import FormButton from "../../shared/FormButton";
 import RegistrationLanguageSelect from "../../shared/RegistrationLanguageSelect";
@@ -236,22 +237,9 @@ export default function Register() {
     <AuthLayout>
       <NotRegisteredModal open={isNotRegisteredOpen} support={support} />
 
-      <Typography
-        variant="h5"
-        mb={2}
-        sx={{
-          fontSize: {
-            xs: "2rem",
-            md: "1.5rem",
-          },
-          fontWeight: {
-            xs: 600,
-            md: 400,
-          },
-        }}
-      >
+      <AuthHeader languageSelect={<RegistrationLanguageSelect control={control} />}>
         {t("Регистрация")}
-      </Typography>
+      </AuthHeader>
 
       {error && <Alert severity="error">{t(error)}</Alert>}
 
@@ -705,8 +693,6 @@ export default function Register() {
               value === watch("password") || "Пароли не совпадают",
           })}
         />
-
-        <RegistrationLanguageSelect control={control} />
 
         <FormButton fullWidth variant="contained" sx={{ mt: 2 }} type="submit">
           {t("Регистрация")}

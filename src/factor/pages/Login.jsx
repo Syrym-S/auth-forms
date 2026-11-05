@@ -1,4 +1,4 @@
-import LanguageSelect from "../../shared/LanguageSelect";
+import AuthHeader from "../../shared/AuthHeader";
 import { useAuthTranslation } from "../../i18n/useAuthTranslation";
 import FormButton from "../../shared/FormButton";
 import FormInput from "../../shared/FormInput";
@@ -88,22 +88,9 @@ export default function Login() {
     <AuthLayout>
       <NotRegisteredModal open={isNotRegisteredOpen} support={support} />
 
-      <Typography
-        variant="h5"
-        mb={2}
-        sx={{
-          fontSize: {
-            xs: "2rem",
-            md: "1.5rem",
-          },
-          fontWeight: {
-            xs: 600,
-            md: 500,
-          },
-        }}
-      >
+      <AuthHeader>
         {t("Вход")}
-      </Typography>
+      </AuthHeader>
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -156,8 +143,6 @@ export default function Login() {
             {t("Забыли пароль?")}
           </FormButton>
         </Box>
-
-        <LanguageSelect />
 
         <FormButton
           fullWidth

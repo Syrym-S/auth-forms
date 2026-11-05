@@ -1,5 +1,5 @@
+import AuthHeader from "./AuthHeader";
 import { useAuthTranslation } from "../i18n/useAuthTranslation";
-import LanguageSelect from './LanguageSelect';
 import FormInput from './FormInput';
 import FormButton from './FormButton';
 import {
@@ -59,22 +59,9 @@ export function ForgotPasswordForm({
 
   return (
     <>
-      <Typography
-        variant="h5"
-        mb={2}
-        sx={{
-          fontSize: {
-            xs: '2rem',
-            md: '1.5rem',
-          },
-          fontWeight: {
-            xs: 600,
-            md: 400,
-          },
-        }}
-      >
+      <AuthHeader languageSelect={localized ? undefined : null}>
         {t("Восстановление пароля")}
-      </Typography>
+      </AuthHeader>
 
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         {t("Введите email, указанный при регистрации. Мы отправим ссылку для сброса пароля.")}
@@ -108,8 +95,6 @@ export function ForgotPasswordForm({
             },
           })}
         />
-
-        {localized && <LanguageSelect />}
 
         <ButtonComponent
           fullWidth

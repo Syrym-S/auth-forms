@@ -1,4 +1,4 @@
-import { MenuItem } from "@mui/material";
+import { CircularProgress, MenuItem } from "@mui/material";
 import { useContext, useEffect } from "react";
 import { useAuthTranslation } from "../i18n/useAuthTranslation";
 import { AuthLanguagesContext } from "./auth-languages.context";
@@ -13,7 +13,7 @@ export default function LanguageSelect({ value, onChange, name, ...props }) {
     : languages.find(({ code }) => code === i18n.language)?.code ||
       languages[0]?.code || "";
   const statusMessage = loading
-    ? "Загрузка языков..."
+    ? ""
     : error
       ? "Не удалось загрузить языки"
       : languages.length === 0
@@ -38,30 +38,39 @@ export default function LanguageSelect({ value, onChange, name, ...props }) {
       value={selectedLanguage}
       disabled={props.disabled || loading || error || languages.length === 0}
       error={props.error || error}
-      helperText={props.helperText || (statusMessage && t(statusMessage))}
+      helperText={loading ? undefined : props.helperText || (statusMessage && t(statusMessage))}
       onChange={(event) => {
         onChange?.(event);
         i18n.changeLanguage(event.target.value);
       }}
       select
       fullWidth={false}
+      margin="none"
       size="small"
       sx={{
-        width: "fit-content",
+        width: 72,
+        maxWidth: "100%",
         display: "flex",
         ml: "auto",
-        "& .MuiOutlinedInput-root": { borderRadius: 3 },
+        "& .MuiOutlinedInput-root": { borderRadius: 3, height: 40 },
         "& .MuiSelect-select.MuiInputBase-input": {
           minWidth: 0,
           pl: 1,
-          pr: 3,
+          pr: loading ? 1 : 3,
         },
-        "& .MuiSelect-icon": { right: 2 },
+        "& .MuiSelect-icon": { right: 2, visibility: loading ? "hidden" : "visible" },
       }}
       slotProps={{
         select: {
-          inputProps: { "aria-label": t("Язык") },
-          renderValue: (language) => language.toUpperCase(),
+          displayEmpty: true,
+          inputProps: { "aria-label": t("Язык"), "aria-busy": loading },
+          renderValue: (language) => loading ? (
+            <CircularProgress
+              size={16}
+              aria-label={t("Загрузка языков...")}
+              sx={{ display: "block", mx: "auto" }}
+            />
+          ) : language.toUpperCase(),
           MenuProps: {
             slotProps: {
               paper: { sx: { borderRadius: 2 } },

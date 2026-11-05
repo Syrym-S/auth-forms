@@ -1,5 +1,5 @@
+import AuthHeader from "./AuthHeader";
 import { useAuthTranslation } from "../i18n/useAuthTranslation";
-import LanguageSelect from './LanguageSelect';
 import FormInput from './FormInput';
 import FormButton from './FormButton';
 import {
@@ -81,22 +81,9 @@ export function ResetPasswordForm({
 
   return (
     <>
-      <Typography
-        variant="h5"
-        mb={2}
-        sx={{
-          fontSize: {
-            xs: '2rem',
-            md: '1.5rem',
-          },
-          fontWeight: {
-            xs: 600,
-            md: 400,
-          },
-        }}
-      >
+      <AuthHeader languageSelect={localized ? undefined : null}>
         {t("Новый пароль")}
-      </Typography>
+      </AuthHeader>
 
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         {t("Придумайте новый пароль для входа в аккаунт.")}
@@ -152,8 +139,6 @@ export function ResetPasswordForm({
               validate: (value) => value === password || 'Пароли не совпадают',
             })}
           />
-
-          {localized && <LanguageSelect />}
 
           <ButtonComponent
             fullWidth

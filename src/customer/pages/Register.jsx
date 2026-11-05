@@ -1,3 +1,4 @@
+import AuthHeader from "../../shared/AuthHeader";
 import { useAuthTranslation } from "../../i18n/useAuthTranslation";
 import FormButton from "../../shared/FormButton";
 import RegistrationLanguageSelect from "../../shared/RegistrationLanguageSelect";
@@ -5,7 +6,6 @@ import i18n from "../../i18n";
 import FormInput from "../../shared/FormInput";
 import {
   Box,
-  Typography,
   Divider,
   Alert,
   CircularProgress,
@@ -396,23 +396,10 @@ export default function Register() {
     <AuthLayout>
       <NotRegisteredModal open={isNotRegisteredOpen} support={support} />
 
-      <Typography
-        variant="h5"
-        mb={2}
-        sx={{
-          fontSize: {
-            xs: "2rem",
-            md: "1.5rem",
-          },
-          fontWeight: {
-            xs: 600,
-            md: 400,
-          },
-        }}
-      >
+      <AuthHeader languageSelect={<RegistrationLanguageSelect control={control} />}>
         {t("Регистрация")}
         {isLoading && <CircularProgress size={16} sx={{ pl: 2 }} />}
-      </Typography>
+      </AuthHeader>
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
@@ -721,8 +708,6 @@ export default function Register() {
             validate: (value) => value === password || "Пароли не совпадают",
           })}
         />
-
-        <RegistrationLanguageSelect control={control} />
 
         <FormButton
           fullWidth
