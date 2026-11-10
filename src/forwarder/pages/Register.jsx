@@ -32,6 +32,9 @@ import {
   getRegistrationNotVerifiedError,
 } from "../../shared/verify-registered.helpers";
 
+const isRegistrationDocumentsEnabled =
+  window?.APP_DATA?.features?.registration_documents;
+
 function getClaimFromUrl() {
   const searchParams = new URLSearchParams(window.location.search);
 
@@ -244,19 +247,21 @@ export default function Register() {
         payload.append("invite", claim);
       }
 
-      payload.append("registration_document", data.registration_document[0]);
+      if (isRegistrationDocumentsEnabled) {
+        payload.append("registration_document", data.registration_document[0]);
 
-      payload.append(
-        "registration_document_name",
-        "Документ о регистрации юридического лица",
-      );
+        payload.append(
+          "registration_document_name",
+          "Документ о регистрации юридического лица",
+        );
 
-      payload.append("employer_document", data.employer_document[0]);
+        payload.append("employer_document", data.employer_document[0]);
 
-      payload.append(
-        "employer_document_name",
-        "Документ о трудоустройстве сотрудника",
-      );
+        payload.append(
+          "employer_document_name",
+          "Документ о трудоустройстве сотрудника",
+        );
+      }
 
       const res = await registerRequest(payload, window?.APP_DATA?.nonce);
 
@@ -372,7 +377,9 @@ export default function Register() {
     <AuthLayout>
       <NotRegisteredModal open={isNotRegisteredOpen} support={support} />
 
-      <AuthHeader languageSelect={<RegistrationLanguageSelect control={control} />}>
+      <AuthHeader
+        languageSelect={<RegistrationLanguageSelect control={control} />}
+      >
         {t("Регистрация")}
       </AuthHeader>
 
@@ -508,258 +515,267 @@ export default function Register() {
             })}
           />
 
-          <Box
-            sx={{
-              border: "1px solid",
-              my: 1,
-              borderColor: errors.registration_document
-                ? "error.main"
-                : "divider",
-              borderRadius: 2,
-              p: 2,
-              transition: "0.2s",
-              "&:hover": {
-                borderColor: "primary.main",
-                backgroundColor: "action.hover",
-              },
-            }}
-          >
-            <Typography
-              sx={{
-                color: "rgba(0, 0, 0, 0.6)",
-                fontSize: "1rem",
-                lineHeight: 1.4375,
-                letterSpacing: "0.00938em",
-                fontWeight: 400,
-              }}
-            >
-              {t("Документ о регистрации юридического лица")}
-            </Typography>
-
-            <FormButton
-              component="label"
-              variant="outlined"
-              startIcon={<UploadFileIcon />}
-            >
-              {t("Выбрать файл")}
-              <input
-                hidden
-                type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
-                {...register("registration_document", {
-                  required: t(
-                    "Документ о регистрации юридического лица обязателен",
-                  ),
-                })}
-              />
-            </FormButton>
-
-            {registration_document?.[0] && (
+          {isRegistrationDocumentsEnabled && (
+            <>
               <Box
                 sx={{
-                  mt: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                  p: 1.5,
                   border: "1px solid",
-                  borderColor: "divider",
+                  my: 1,
+                  borderColor: errors.registration_document
+                    ? "error.main"
+                    : "divider",
                   borderRadius: 2,
-                  backgroundColor: "background.paper",
+                  p: 2,
+                  transition: "0.2s",
+                  "&:hover": {
+                    borderColor: "primary.main",
+                    backgroundColor: "action.hover",
+                  },
                 }}
               >
-                {registration_document[0].type.startsWith("image/") ? (
-                  <Box
-                    component="img"
-                    src={URL.createObjectURL(registration_document[0])}
-                    alt={registration_document[0].name}
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 1,
-                      objectFit: "cover",
-                    }}
+                <Typography
+                  sx={{
+                    color: "rgba(0, 0, 0, 0.6)",
+                    fontSize: "1rem",
+                    lineHeight: 1.4375,
+                    letterSpacing: "0.00938em",
+                    fontWeight: 400,
+                  }}
+                >
+                  {t("Документ о регистрации юридического лица")}
+                </Typography>
+
+                <FormButton
+                  component="label"
+                  variant="outlined"
+                  startIcon={<UploadFileIcon />}
+                >
+                  {t("Выбрать файл")}
+                  <input
+                    hidden
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    {...register("registration_document", {
+                      required: t(
+                        "Документ о регистрации юридического лица обязателен",
+                      ),
+                    })}
                   />
-                ) : (
+                </FormButton>
+
+                {registration_document?.[0] && (
                   <Box
                     sx={{
-                      width: 56,
-                      height: 56,
+                      mt: 2,
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 1,
-                      backgroundColor: "action.hover",
+                      gap: 1.5,
+                      p: 1.5,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 2,
+                      backgroundColor: "background.paper",
                     }}
                   >
-                    <InsertDriveFileOutlinedIcon
-                      color="primary"
-                      fontSize="large"
-                    />
+                    {registration_document[0].type.startsWith("image/") ? (
+                      <Box
+                        component="img"
+                        src={URL.createObjectURL(registration_document[0])}
+                        alt={registration_document[0].name}
+                        sx={{
+                          width: 56,
+                          height: 56,
+                          borderRadius: 1,
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      <Box
+                        sx={{
+                          width: 56,
+                          height: 56,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: 1,
+                          backgroundColor: "action.hover",
+                        }}
+                      >
+                        <InsertDriveFileOutlinedIcon
+                          color="primary"
+                          fontSize="large"
+                        />
+                      </Box>
+                    )}
+
+                    <Box
+                      sx={{
+                        minWidth: 0,
+                        flex: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        fontWeight={500}
+                        noWrap
+                        title={registration_document[0].name}
+                      >
+                        {registration_document[0].name}
+                      </Typography>
+
+                      <Typography variant="caption" color="text.secondary">
+                        {(registration_document[0].size / 1024 / 1024).toFixed(
+                          2,
+                        )}{" "}
+                        MB
+                      </Typography>
+                    </Box>
+
+                    <IconButton
+                      color="error"
+                      onClick={() => setValue("registration_document", null)}
+                    >
+                      <DeleteOutlineOutlinedIcon />
+                    </IconButton>
                   </Box>
                 )}
 
-                <Box
-                  sx={{
-                    minWidth: 0,
-                    flex: 1,
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    fontWeight={500}
-                    noWrap
-                    title={registration_document[0].name}
-                  >
-                    {registration_document[0].name}
-                  </Typography>
-
-                  <Typography variant="caption" color="text.secondary">
-                    {(registration_document[0].size / 1024 / 1024).toFixed(2)}{" "}
-                    MB
-                  </Typography>
-                </Box>
-
-                <IconButton
-                  color="error"
-                  onClick={() => setValue("registration_document", null)}
-                >
-                  <DeleteOutlineOutlinedIcon />
-                </IconButton>
+                {errors.registration_document && (
+                  <FormHelperText error>
+                    {t(errors.registration_document.message)}
+                  </FormHelperText>
+                )}
               </Box>
-            )}
 
-            {errors.registration_document && (
-              <FormHelperText error>
-                {t(errors.registration_document.message)}
-              </FormHelperText>
-            )}
-          </Box>
-
-          <Box
-            sx={{
-              border: "1px solid",
-              my: 1,
-              borderColor: errors.employer_document ? "error.main" : "divider",
-              borderRadius: 2,
-              p: 2,
-              transition: "0.2s",
-              "&:hover": {
-                borderColor: "primary.main",
-                backgroundColor: "action.hover",
-              },
-            }}
-          >
-            <Typography
-              sx={{
-                color: "rgba(0, 0, 0, 0.6)",
-                fontSize: "1rem",
-                lineHeight: 1.4375,
-                letterSpacing: "0.00938em",
-                fontWeight: 400,
-              }}
-            >
-              {t("Документ о трудоустройстве сотрудника")}
-            </Typography>
-
-            <FormButton
-              component="label"
-              variant="outlined"
-              startIcon={<UploadFileIcon />}
-            >
-              {t("Выбрать файл")}
-              <input
-                hidden
-                type="file"
-                accept=".pdf,.jpg,.jpeg,.png"
-                {...register("employer_document", {
-                  required: t(
-                    "Документ о трудоустройстве сотрудника обязателен",
-                  ),
-                })}
-              />
-            </FormButton>
-
-            {employer_document?.[0] && (
               <Box
                 sx={{
-                  mt: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1.5,
-                  p: 1.5,
                   border: "1px solid",
-                  borderColor: "divider",
+                  my: 1,
+                  borderColor: errors.employer_document
+                    ? "error.main"
+                    : "divider",
                   borderRadius: 2,
-                  backgroundColor: "background.paper",
+                  p: 2,
+                  transition: "0.2s",
+                  "&:hover": {
+                    borderColor: "primary.main",
+                    backgroundColor: "action.hover",
+                  },
                 }}
               >
-                {employer_document[0].type.startsWith("image/") ? (
-                  <Box
-                    component="img"
-                    src={URL.createObjectURL(employer_document[0])}
-                    alt={employer_document[0].name}
-                    sx={{
-                      width: 56,
-                      height: 56,
-                      borderRadius: 1,
-                      objectFit: "cover",
-                    }}
+                <Typography
+                  sx={{
+                    color: "rgba(0, 0, 0, 0.6)",
+                    fontSize: "1rem",
+                    lineHeight: 1.4375,
+                    letterSpacing: "0.00938em",
+                    fontWeight: 400,
+                  }}
+                >
+                  {t("Документ о трудоустройстве сотрудника")}
+                </Typography>
+
+                <FormButton
+                  component="label"
+                  variant="outlined"
+                  startIcon={<UploadFileIcon />}
+                >
+                  {t("Выбрать файл")}
+                  <input
+                    hidden
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    {...register("employer_document", {
+                      required: t(
+                        "Документ о трудоустройстве сотрудника обязателен",
+                      ),
+                    })}
                   />
-                ) : (
+                </FormButton>
+
+                {employer_document?.[0] && (
                   <Box
                     sx={{
-                      width: 56,
-                      height: 56,
+                      mt: 2,
                       display: "flex",
                       alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 1,
-                      backgroundColor: "action.hover",
+                      gap: 1.5,
+                      p: 1.5,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 2,
+                      backgroundColor: "background.paper",
                     }}
                   >
-                    <InsertDriveFileOutlinedIcon
-                      color="primary"
-                      fontSize="large"
-                    />
+                    {employer_document[0].type.startsWith("image/") ? (
+                      <Box
+                        component="img"
+                        src={URL.createObjectURL(employer_document[0])}
+                        alt={employer_document[0].name}
+                        sx={{
+                          width: 56,
+                          height: 56,
+                          borderRadius: 1,
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      <Box
+                        sx={{
+                          width: 56,
+                          height: 56,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: 1,
+                          backgroundColor: "action.hover",
+                        }}
+                      >
+                        <InsertDriveFileOutlinedIcon
+                          color="primary"
+                          fontSize="large"
+                        />
+                      </Box>
+                    )}
+
+                    <Box
+                      sx={{
+                        minWidth: 0,
+                        flex: 1,
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        fontWeight={500}
+                        noWrap
+                        title={employer_document[0].name}
+                      >
+                        {employer_document[0].name}
+                      </Typography>
+
+                      <Typography variant="caption" color="text.secondary">
+                        {(employer_document[0].size / 1024 / 1024).toFixed(2)}{" "}
+                        MB
+                      </Typography>
+                    </Box>
+
+                    <IconButton
+                      color="error"
+                      onClick={() => setValue("employer_document", null)}
+                    >
+                      <DeleteOutlineOutlinedIcon />
+                    </IconButton>
                   </Box>
                 )}
 
-                <Box
-                  sx={{
-                    minWidth: 0,
-                    flex: 1,
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    fontWeight={500}
-                    noWrap
-                    title={employer_document[0].name}
-                  >
-                    {employer_document[0].name}
-                  </Typography>
-
-                  <Typography variant="caption" color="text.secondary">
-                    {(employer_document[0].size / 1024 / 1024).toFixed(2)} MB
-                  </Typography>
-                </Box>
-
-                <IconButton
-                  color="error"
-                  onClick={() => setValue("employer_document", null)}
-                >
-                  <DeleteOutlineOutlinedIcon />
-                </IconButton>
+                {errors.employer_document && (
+                  <FormHelperText error>
+                    {t(errors.employer_document.message)}
+                  </FormHelperText>
+                )}
               </Box>
-            )}
-
-            {errors.employer_document && (
-              <FormHelperText error>
-                {t(errors.employer_document.message)}
-              </FormHelperText>
-            )}
-          </Box>
+            </>
+          )}
 
           <Controller
             name="phone"

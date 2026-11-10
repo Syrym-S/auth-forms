@@ -13,6 +13,7 @@ import {
   CircularProgress,
   FormHelperText,
   IconButton,
+  MenuItem,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
@@ -22,6 +23,11 @@ import { registerRequest } from "../../api/auth";
 import { normalizeBackendParams } from "../../shared/backend-validation-error.helpers";
 import { formatPhoneInput } from "../../shared/phone-format.helpers";
 import { passwordPatternRule } from "../../shared/password-validation.helpers";
+import {
+  DOCUMENT_ISSUED_BY_OPTIONS,
+  getTodayDateInputValue,
+  validateNotAfterToday,
+} from "../../shared/identity-document.helpers";
 import { NotRegisteredModal } from "../../shared/NotRegisteredModal";
 import {
   getVerifyRegistered,
@@ -31,6 +37,9 @@ import {
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+
+const isRegistrationDocumentsEnabled =
+  window?.APP_DATA?.features?.registration_documents;
 
 export default function Register() {
   const { t } = useAuthTranslation();
@@ -47,7 +56,11 @@ export default function Register() {
     setError,
     control,
   } = useForm({
-    defaultValues: { language: i18n.language },
+    defaultValues: {
+      language: i18n.language,
+      documentIssueDate: "",
+      documentIssuedBy: "",
+    },
   });
 
   const BACKEND_FIELD_MAP = {
@@ -77,6 +90,14 @@ export default function Register() {
     issue_country: {
       field: "issueCountry",
       message: "Укажите страну выдачи документа",
+    },
+    document_issue_date: {
+      field: "documentIssueDate",
+      message: "Проверьте дату выдачи документа",
+    },
+    document_issued_by: {
+      field: "documentIssuedBy",
+      message: "Укажите, кем выдан документ",
     },
     registration_document: {
       field: "legalEntityRegistrationDocument",
@@ -113,25 +134,32 @@ export default function Register() {
       formData.append("phone", data.phone);
       formData.append("document_number", data.documentNumber);
       formData.append("issue_country", data.issueCountry);
+      formData.append("document_issue_date", data.documentIssueDate);
+      formData.append("document_issued_by", data.documentIssuedBy);
       formData.append("password", data.password);
       formData.append("password_confirm", data.password_confirm);
 
-      formData.append(
-        "registration_document",
-        data.legalEntityRegistrationDocument[0],
-      );
+      if (isRegistrationDocumentsEnabled) {
+        formData.append(
+          "registration_document",
+          data.legalEntityRegistrationDocument[0],
+        );
 
-      formData.append(
-        "registration_document_name",
-        "Документ о регистрации юридического лица",
-      );
+        formData.append(
+          "registration_document_name",
+          "Документ о регистрации юридического лица",
+        );
 
-      formData.append("employer_document", data.employeeEmploymentDocument[0]);
+        formData.append(
+          "employer_document",
+          data.employeeEmploymentDocument[0],
+        );
 
-      formData.append(
-        "employer_document_name",
-        "Документ о трудоустройстве сотрудника с правом подписи или приказ о назначении первого руководителя",
-      );
+        formData.append(
+          "employer_document_name",
+          "Документ о трудоустройстве сотрудника с правом подписи или приказ о назначении первого руководителя",
+        );
+      }
 
       const res = await registerRequest(formData, window?.APP_DATA?.nonce);
 
@@ -237,7 +265,9 @@ export default function Register() {
     <AuthLayout>
       <NotRegisteredModal open={isNotRegisteredOpen} support={support} />
 
-      <AuthHeader languageSelect={<RegistrationLanguageSelect control={control} />}>
+      <AuthHeader
+        languageSelect={<RegistrationLanguageSelect control={control} />}
+      >
         {t("Регистрация")}
       </AuthHeader>
 
@@ -356,265 +386,325 @@ export default function Register() {
           })}
         />
 
-        <Box
-          sx={{
-            border: "1px solid",
-            my: 1,
-            borderColor: errors.legalEntityRegistrationDocument
-              ? "error.main"
-              : "divider",
-            borderRadius: 2,
-            p: 2,
-            transition: "0.2s",
-            "&:hover": {
-              borderColor: "primary.main",
-              backgroundColor: "action.hover",
+        <FormInput
+          fullWidth
+          type="date"
+          label={t("Когда выдан документ")}
+          margin="normal"
+          error={!!errors.documentIssueDate}
+          helperText={t(errors.documentIssueDate?.message)}
+          {...register("documentIssueDate", {
+            required: "Укажите дату выдачи документа",
+            validate: validateNotAfterToday,
+          })}
+          slotProps={{
+            inputLabel: {
+              shrink: true,
+            },
+            htmlInput: {
+              max: getTodayDateInputValue(),
             },
           }}
-        >
-          <Typography
-            sx={{
-              color: "rgba(0, 0, 0, 0.6)",
-              fontSize: "1rem",
-              lineHeight: 1.4375,
-              letterSpacing: "0.00938em",
-              fontWeight: 400,
-            }}
-          >
-            {t("Документ о регистрации юридического лица")}
-          </Typography>
+        />
 
-          <Button
-            component="label"
-            variant="outlined"
-            startIcon={<UploadFileIcon />}
-          >
-            {t("Выбрать файл")}
-            <input
-              hidden
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
-              {...register("legalEntityRegistrationDocument", {
-                required: "Документ о регистрации юридического лица обязателен",
-              })}
-            />
-          </Button>
+        <Controller
+          name="documentIssuedBy"
+          control={control}
+          rules={{ required: "Укажите, кем выдан документ" }}
+          render={({ field }) => (
+            <FormInput
+              select
+              fullWidth
+              label={t("Кем выдан документ")}
+              margin="normal"
+              error={!!errors.documentIssuedBy}
+              helperText={t(errors.documentIssuedBy?.message)}
+              inputRef={field.ref}
+              name={field.name}
+              value={field.value}
+              onBlur={field.onBlur}
+              onChange={field.onChange}
+            >
+              {DOCUMENT_ISSUED_BY_OPTIONS.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {t(option)}
+                </MenuItem>
+              ))}
+            </FormInput>
+          )}
+        />
 
-          {legalEntityRegistrationDocument?.[0] && (
+        {isRegistrationDocumentsEnabled && (
+          <>
             <Box
               sx={{
-                mt: 2,
-                display: "flex",
-                alignItems: "center",
-                gap: 1.5,
-                p: 1.5,
                 border: "1px solid",
-                borderColor: "divider",
+                my: 1,
+                borderColor: errors.legalEntityRegistrationDocument
+                  ? "error.main"
+                  : "divider",
                 borderRadius: 2,
-                backgroundColor: "background.paper",
+                p: 2,
+                transition: "0.2s",
+                "&:hover": {
+                  borderColor: "primary.main",
+                  backgroundColor: "action.hover",
+                },
               }}
             >
-              {legalEntityRegistrationDocument[0].type.startsWith("image/") ? (
-                <Box
-                  component="img"
-                  src={URL.createObjectURL(legalEntityRegistrationDocument[0])}
-                  alt={legalEntityRegistrationDocument[0].name}
-                  sx={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: 1,
-                    objectFit: "cover",
-                  }}
+              <Typography
+                sx={{
+                  color: "rgba(0, 0, 0, 0.6)",
+                  fontSize: "1rem",
+                  lineHeight: 1.4375,
+                  letterSpacing: "0.00938em",
+                  fontWeight: 400,
+                }}
+              >
+                {t("Документ о регистрации юридического лица")}
+              </Typography>
+
+              <Button
+                component="label"
+                variant="outlined"
+                startIcon={<UploadFileIcon />}
+              >
+                {t("Выбрать файл")}
+                <input
+                  hidden
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  {...register("legalEntityRegistrationDocument", {
+                    required:
+                      "Документ о регистрации юридического лица обязателен",
+                  })}
                 />
-              ) : (
+              </Button>
+
+              {legalEntityRegistrationDocument?.[0] && (
                 <Box
                   sx={{
-                    width: 56,
-                    height: 56,
+                    mt: 2,
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 1,
-                    backgroundColor: "action.hover",
+                    gap: 1.5,
+                    p: 1.5,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 2,
+                    backgroundColor: "background.paper",
                   }}
                 >
-                  <InsertDriveFileOutlinedIcon
-                    color="primary"
-                    fontSize="large"
-                  />
+                  {legalEntityRegistrationDocument[0].type.startsWith(
+                    "image/",
+                  ) ? (
+                    <Box
+                      component="img"
+                      src={URL.createObjectURL(
+                        legalEntityRegistrationDocument[0],
+                      )}
+                      alt={legalEntityRegistrationDocument[0].name}
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 1,
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <Box
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 1,
+                        backgroundColor: "action.hover",
+                      }}
+                    >
+                      <InsertDriveFileOutlinedIcon
+                        color="primary"
+                        fontSize="large"
+                      />
+                    </Box>
+                  )}
+
+                  <Box
+                    sx={{
+                      minWidth: 0,
+                      flex: 1,
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      fontWeight={500}
+                      noWrap
+                      title={legalEntityRegistrationDocument[0].name}
+                    >
+                      {legalEntityRegistrationDocument[0].name}
+                    </Typography>
+
+                    <Typography variant="caption" color="text.secondary">
+                      {(
+                        legalEntityRegistrationDocument[0].size /
+                        1024 /
+                        1024
+                      ).toFixed(2)}{" "}
+                      MB
+                    </Typography>
+                  </Box>
+
+                  <IconButton
+                    color="error"
+                    onClick={() =>
+                      setValue("legalEntityRegistrationDocument", null)
+                    }
+                  >
+                    <DeleteOutlineOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
 
-              <Box
-                sx={{
-                  minWidth: 0,
-                  flex: 1,
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  fontWeight={500}
-                  noWrap
-                  title={legalEntityRegistrationDocument[0].name}
-                >
-                  {legalEntityRegistrationDocument[0].name}
-                </Typography>
-
-                <Typography variant="caption" color="text.secondary">
-                  {(
-                    legalEntityRegistrationDocument[0].size /
-                    1024 /
-                    1024
-                  ).toFixed(2)}{" "}
-                  MB
-                </Typography>
-              </Box>
-
-              <IconButton
-                color="error"
-                onClick={() =>
-                  setValue("legalEntityRegistrationDocument", null)
-                }
-              >
-                <DeleteOutlineOutlinedIcon />
-              </IconButton>
+              {errors.legalEntityRegistrationDocument && (
+                <FormHelperText error>
+                  {t(errors.legalEntityRegistrationDocument.message)}
+                </FormHelperText>
+              )}
             </Box>
-          )}
 
-          {errors.legalEntityRegistrationDocument && (
-            <FormHelperText error>
-              {t(errors.legalEntityRegistrationDocument.message)}
-            </FormHelperText>
-          )}
-        </Box>
-
-        <Box
-          sx={{
-            border: "1px solid",
-            my: 1,
-            borderColor: errors.employeeEmploymentDocument
-              ? "error.main"
-              : "divider",
-            borderRadius: 2,
-            p: 2,
-            transition: "0.2s",
-            "&:hover": {
-              borderColor: "primary.main",
-              backgroundColor: "action.hover",
-            },
-          }}
-        >
-          <Typography
-            sx={{
-              color: "rgba(0, 0, 0, 0.6)",
-              fontSize: "1rem",
-              lineHeight: 1.4375,
-              letterSpacing: "0.00938em",
-              fontWeight: 400,
-            }}
-          >
-            {t("Документ о трудоустройстве сотрудника")}
-          </Typography>
-
-          <Button
-            component="label"
-            variant="outlined"
-            startIcon={<UploadFileIcon />}
-          >
-            {t("Выбрать файл")}
-            <input
-              hidden
-              type="file"
-              accept=".pdf,.jpg,.jpeg,.png"
-              {...register("employeeEmploymentDocument", {
-                required: "Документ о трудоустройстве сотрудника обязателен",
-              })}
-            />
-          </Button>
-
-          {employeeEmploymentDocument?.[0] && (
             <Box
               sx={{
-                mt: 2,
-                display: "flex",
-                alignItems: "center",
-                gap: 1.5,
-                p: 1.5,
                 border: "1px solid",
-                borderColor: "divider",
+                my: 1,
+                borderColor: errors.employeeEmploymentDocument
+                  ? "error.main"
+                  : "divider",
                 borderRadius: 2,
-                backgroundColor: "background.paper",
+                p: 2,
+                transition: "0.2s",
+                "&:hover": {
+                  borderColor: "primary.main",
+                  backgroundColor: "action.hover",
+                },
               }}
             >
-              {employeeEmploymentDocument[0].type.startsWith("image/") ? (
-                <Box
-                  component="img"
-                  src={URL.createObjectURL(employeeEmploymentDocument[0])}
-                  alt={employeeEmploymentDocument[0].name}
-                  sx={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: 1,
-                    objectFit: "cover",
-                  }}
+              <Typography
+                sx={{
+                  color: "rgba(0, 0, 0, 0.6)",
+                  fontSize: "1rem",
+                  lineHeight: 1.4375,
+                  letterSpacing: "0.00938em",
+                  fontWeight: 400,
+                }}
+              >
+                {t("Документ о трудоустройстве сотрудника")}
+              </Typography>
+
+              <Button
+                component="label"
+                variant="outlined"
+                startIcon={<UploadFileIcon />}
+              >
+                {t("Выбрать файл")}
+                <input
+                  hidden
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  {...register("employeeEmploymentDocument", {
+                    required:
+                      "Документ о трудоустройстве сотрудника обязателен",
+                  })}
                 />
-              ) : (
+              </Button>
+
+              {employeeEmploymentDocument?.[0] && (
                 <Box
                   sx={{
-                    width: 56,
-                    height: 56,
+                    mt: 2,
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 1,
-                    backgroundColor: "action.hover",
+                    gap: 1.5,
+                    p: 1.5,
+                    border: "1px solid",
+                    borderColor: "divider",
+                    borderRadius: 2,
+                    backgroundColor: "background.paper",
                   }}
                 >
-                  <InsertDriveFileOutlinedIcon
-                    color="primary"
-                    fontSize="large"
-                  />
+                  {employeeEmploymentDocument[0].type.startsWith("image/") ? (
+                    <Box
+                      component="img"
+                      src={URL.createObjectURL(employeeEmploymentDocument[0])}
+                      alt={employeeEmploymentDocument[0].name}
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: 1,
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    <Box
+                      sx={{
+                        width: 56,
+                        height: 56,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 1,
+                        backgroundColor: "action.hover",
+                      }}
+                    >
+                      <InsertDriveFileOutlinedIcon
+                        color="primary"
+                        fontSize="large"
+                      />
+                    </Box>
+                  )}
+
+                  <Box
+                    sx={{
+                      minWidth: 0,
+                      flex: 1,
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      fontWeight={500}
+                      noWrap
+                      title={employeeEmploymentDocument[0].name}
+                    >
+                      {employeeEmploymentDocument[0].name}
+                    </Typography>
+
+                    <Typography variant="caption" color="text.secondary">
+                      {(
+                        employeeEmploymentDocument[0].size /
+                        1024 /
+                        1024
+                      ).toFixed(2)}{" "}
+                      MB
+                    </Typography>
+                  </Box>
+
+                  <IconButton
+                    color="error"
+                    onClick={() => setValue("employeeEmploymentDocument", null)}
+                  >
+                    <DeleteOutlineOutlinedIcon />
+                  </IconButton>
                 </Box>
               )}
 
-              <Box
-                sx={{
-                  minWidth: 0,
-                  flex: 1,
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  fontWeight={500}
-                  noWrap
-                  title={employeeEmploymentDocument[0].name}
-                >
-                  {employeeEmploymentDocument[0].name}
-                </Typography>
-
-                <Typography variant="caption" color="text.secondary">
-                  {(employeeEmploymentDocument[0].size / 1024 / 1024).toFixed(
-                    2,
-                  )}{" "}
-                  MB
-                </Typography>
-              </Box>
-
-              <IconButton
-                color="error"
-                onClick={() => setValue("employeeEmploymentDocument", null)}
-              >
-                <DeleteOutlineOutlinedIcon />
-              </IconButton>
+              {errors.employeeEmploymentDocument && (
+                <FormHelperText error>
+                  {t(errors.employeeEmploymentDocument.message)}
+                </FormHelperText>
+              )}
             </Box>
-          )}
-
-          {errors.employeeEmploymentDocument && (
-            <FormHelperText error>
-              {t(errors.employeeEmploymentDocument.message)}
-            </FormHelperText>
-          )}
-        </Box>
+          </>
+        )}
 
         <Controller
           name="phone"
