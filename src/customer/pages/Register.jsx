@@ -77,7 +77,6 @@ export default function Register() {
       company_name: "",
       bin: "",
       bik: "",
-      bank_name: "",
       iik: "",
       legal_address: "",
       fio: "",
@@ -112,7 +111,6 @@ export default function Register() {
     },
     bin: { field: "bin", message: "БИН указан некорректно" },
     bik: { field: "bik", message: "БИК указан некорректно" },
-    bank_name: { field: "bank_name", message: "Проверьте название банка" },
     iik: { field: "iik", message: "Проверьте правильность ИИК" },
     legal_address: {
       field: "legal_address",
@@ -200,10 +198,6 @@ export default function Register() {
 
       if (data.bik) {
         payload.append("bik", data.bik);
-      }
-
-      if (data.bank_name) {
-        payload.append("bank_name", data.bank_name);
       }
 
       if (data.iik) {
@@ -359,7 +353,6 @@ export default function Register() {
         company_name: data.full_name ?? "",
         bin: data.bin ?? "",
         bik: data.bik ?? "",
-        bank_name: data.bank_name ?? "",
         iik: data.iik ?? "",
         legal_address: data.legal_address ?? "",
         fio: data?.person?.fio ?? "",
@@ -460,16 +453,6 @@ export default function Register() {
           {...register("legal_address", {
             required: "Введите юридический адрес",
           })}
-        />
-
-        <FormInput
-          fullWidth
-          label={t("Банк")}
-          placeholder={t("АО «Пример Банк»")}
-          margin="normal"
-          error={!!errors.bank_name}
-          helperText={t(errors.bank_name?.message)}
-          {...register("bank_name")}
         />
 
         <FormInput
